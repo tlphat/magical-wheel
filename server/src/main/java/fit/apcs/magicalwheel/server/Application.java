@@ -1,9 +1,17 @@
 package fit.apcs.magicalwheel.server;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import fit.apcs.magicalwheel.server.gameplay.GameLoader;
+
 public final class Application {
 
+    private static final Logger LOGGER = Logger.getLogger(Application.class.getName());
+
     public static void main(String[] args) {
-        System.out.println("Server up");
+        final var gameLoader = GameLoader.getInstance();
+        LOGGER.log(Level.INFO, "Questions {0}", gameLoader.getQuestions());
     }
 
 }
