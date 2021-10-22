@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import fit.apcs.magicalwheel.server.enitty.Question;
+import fit.apcs.magicalwheel.server.entity.Question;
 
 public final class GameLoader {
 

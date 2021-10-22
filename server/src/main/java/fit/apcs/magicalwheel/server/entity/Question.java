@@ -1,4 +1,4 @@
-package fit.apcs.magicalwheel.server.enitty;
+package fit.apcs.magicalwheel.server.entity;
 
 public class Question {
 
