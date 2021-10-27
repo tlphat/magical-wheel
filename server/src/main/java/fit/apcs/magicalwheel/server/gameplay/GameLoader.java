@@ -3,8 +3,11 @@ package fit.apcs.magicalwheel.server.gameplay;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,9 +19,19 @@ public final class GameLoader {
     private static final GameLoader INSTANCE = new GameLoader();
 
     private final List<Question> questions = new ArrayList<>();
+    private Random rand;
 
     private GameLoader() {
+        initRandomInstant();
         loadQuestions("database.txt");
+    }
+
+    private void initRandomInstant() {
+        try {
+            rand = SecureRandom.getInstanceStrong();
+        } catch (NoSuchAlgorithmException ex) {
+            LOGGER.log(Level.SEVERE, "Cannot find strong secure random algorithm", ex);
+        }
     }
 
     private void loadQuestions(String path) {
@@ -59,6 +72,11 @@ public final class GameLoader {
 
     public List<Question> getQuestions() {
         return questions;
+    }
+
+    public Question getRandomQuestion() {
+        final var randomIndex = rand.nextInt(questions.size());
+        return questions.get(randomIndex);
     }
 
     public static GameLoader getInstance() {

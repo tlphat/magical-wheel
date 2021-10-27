@@ -12,6 +12,9 @@ public final class Application {
     public static void main(String[] args) {
         final var gameLoader = GameLoader.getInstance();
         LOGGER.log(Level.INFO, "Questions {0}", gameLoader.getQuestions());
+        for (var i = 0; i < 10; ++i) {
+            LOGGER.log(Level.INFO, "Random question {0}", gameLoader.getRandomQuestion());
+        }
     }
 
 }
