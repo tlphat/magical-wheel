@@ -14,12 +14,12 @@ public class GamePlay {
     private final Question question = GameLoader.getInstance().getRandomQuestion();
     private final AtomicInteger currentNumPlayer = new AtomicInteger(0);
 
-    public synchronized boolean canBeStarted() {
+    public synchronized boolean canStart() {
         return mapPlayerOrder.size() == MAX_NUM_PLAYERS;
     }
 
     public synchronized void addPlayer(Player player) {
-        if (canBeStarted()) {
+        if (canStart()) {
             throw new UnsupportedOperationException("There is enough players got connected");
         }
         if (mapPlayerOrder.containsKey(player)) {

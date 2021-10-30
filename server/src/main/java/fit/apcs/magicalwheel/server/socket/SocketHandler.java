@@ -30,7 +30,7 @@ public class SocketHandler {
                      AsynchronousServerSocketChannel.open().bind(new InetSocketAddress(SERVER_PORT))) {
             LOGGER.log(Level.INFO, "Server waiting for connections");
             waitingForConnections(serverChannel);
-            while (!gamePlay.canBeStarted()) {
+            while (!gamePlay.canStart()) {
                 Thread.onSpinWait();
             }
             gamePlay.start();
@@ -48,7 +48,7 @@ public class SocketHandler {
             public void completed(AsynchronousSocketChannel clientChannel, Void attachment) {
                 LOGGER.log(Level.INFO, "New connection accepted");
                 requestForName(clientChannel);
-                if (!gamePlay.canBeStarted()) {
+                if (!gamePlay.canStart()) {
                     serverChannel.accept(null, this);
                 }
             }
@@ -56,7 +56,7 @@ public class SocketHandler {
             @Override
             public void failed(Throwable ex, Void attachment) {
                 LOGGER.log(Level.WARNING, "Error in accepting connection", ex);
-                if (!gamePlay.canBeStarted()) {
+                if (!gamePlay.canStart()) {
                     serverChannel.accept(null, this);
                 }
             }
