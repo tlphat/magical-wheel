@@ -59,7 +59,7 @@ public final class Server {
             @Override
             public void completed(AsynchronousSocketChannel clientChannel, Void attachment) {
                 LOGGER.log(Level.INFO, "New connection accepted");
-                requestForName(clientChannel);
+                readName(clientChannel);
                 if (!gamePlay.canStart()) {
                     serverChannel.accept(null, this);
                 }
@@ -75,7 +75,7 @@ public final class Server {
         });
     }
 
-    private void requestForName(AsynchronousSocketChannel clientChannel) {
+    private void readName(AsynchronousSocketChannel clientChannel) {
         final var byteBuffer = ByteBuffer.allocate(200);
         clientChannel.read(byteBuffer, READ_TIMEOUT, SECONDS, null, new CompletionHandler<Integer, Void>() {
             @Override
