@@ -5,16 +5,17 @@ import java.net.InetSocketAddress;
 import java.nio.channels.AsynchronousServerSocketChannel;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import fit.apcs.magicalwheel.server.gameplay.GamePlay;
 
 public class Controller {
 
     private static final Logger LOGGER = Logger.getLogger(Controller.class.getName());
     private static final int PORT = 8080;
 
-    private final AtomicInteger numConnections = new AtomicInteger();
+    private final GamePlay gamePlay = new GamePlay();
 
     public void initServerSocket() {
         // TODO: check if the requirement justify the use of asynchronous server socket channel
@@ -22,7 +23,7 @@ public class Controller {
                                                                       .bind(new InetSocketAddress(PORT))) {
             LOGGER.log(Level.INFO, "Server waiting for connections");
             waitingForConnections(serverChannel);
-            while (numConnections.intValue() < 2) { // FIXME: extract this constant
+            while (gamePlay.cannotBeStarted()) {
                 Thread.onSpinWait();
             }
             LOGGER.log(Level.INFO, "Game started");
@@ -37,7 +38,7 @@ public class Controller {
             @Override
             public void completed(AsynchronousSocketChannel result, Void attachment) {
                 LOGGER.log(Level.INFO, "New connection accepted");
-                if (numConnections.incrementAndGet() < 2) {
+                if (gamePlay.cannotBeStarted()) {
                     serverChannel.accept(null, this);
                 }
             }
@@ -45,7 +46,7 @@ public class Controller {
             @Override
             public void failed(Throwable ex, Void attachment) {
                 LOGGER.log(Level.WARNING, "Error in accepting connection", ex);
-                if (numConnections.incrementAndGet() < 2) {
+                if (gamePlay.cannotBeStarted()) {
                     serverChannel.accept(null, this);
                 }
             }
