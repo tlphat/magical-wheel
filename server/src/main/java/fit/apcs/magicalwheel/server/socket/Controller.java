@@ -21,7 +21,7 @@ public class Controller {
 
     private final GamePlay gamePlay = new GamePlay();
 
-    public void initServerSocket() {
+    public void runServer() {
         // TODO: check if the requirement justify the use of asynchronous server socket channel
         try (final var serverChannel =
                      AsynchronousServerSocketChannel.open().bind(new InetSocketAddress(SERVER_PORT))) {
