@@ -1,5 +1,8 @@
-package fit.apcs.magicalwheel.server.socket;
+package fit.apcs.magicalwheel.server.connection;
 
+import static fit.apcs.magicalwheel.server.connection.SocketUtil.byteBufferToString;
+import static fit.apcs.magicalwheel.server.connection.SocketUtil.closeSocketChannel;
+import static fit.apcs.magicalwheel.server.connection.SocketUtil.writeStringToChannel;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 import java.io.IOException;
@@ -8,23 +11,32 @@ import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousServerSocketChannel;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
-import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import fit.apcs.magicalwheel.server.entity.Player;
 import fit.apcs.magicalwheel.server.gameplay.GamePlay;
 
-public class SocketHandler {
+public final class Server {
 
-    private static final Logger LOGGER = Logger.getLogger(SocketHandler.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Server.class.getName());
+    private static final Server INSTANCE = new Server();
+
     private static final String OK_MESSAGE = "OK";
     private static final int SERVER_PORT = 8080;
     private static final long READ_TIMEOUT = 10; // in seconds
 
     private final GamePlay gamePlay = new GamePlay();
 
-    public void runServer() {
+    private Server() {
+
+    }
+
+    public static Server getInstance() {
+        return INSTANCE;
+    }
+
+    public void run() {
         // TODO: check if the requirement justify the use of asynchronous server socket channel
         try (final var serverChannel =
                      AsynchronousServerSocketChannel.open().bind(new InetSocketAddress(SERVER_PORT))) {
@@ -84,24 +96,6 @@ public class SocketHandler {
                 closeSocketChannel(clientChannel);
             }
         });
-    }
-
-    public static String byteBufferToString(ByteBuffer byteBuffer, Integer numBytes) {
-        final var byteArray = new byte[numBytes];
-        byteBuffer.flip().get(byteArray);
-        return new String(byteArray, StandardCharsets.UTF_8);
-    }
-
-    private static void writeStringToChannel(AsynchronousSocketChannel channel, String message) {
-        channel.write(ByteBuffer.wrap(message.getBytes(StandardCharsets.UTF_8)));
-    }
-
-    private static void closeSocketChannel(AsynchronousSocketChannel channel) {
-        try {
-            channel.close();
-        } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, "Error in closing socket", ex);
-        }
     }
 
 }
