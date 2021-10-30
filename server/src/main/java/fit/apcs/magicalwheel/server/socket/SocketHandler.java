@@ -15,9 +15,9 @@ import java.util.logging.Logger;
 import fit.apcs.magicalwheel.server.entity.Player;
 import fit.apcs.magicalwheel.server.gameplay.GamePlay;
 
-public class Controller {
+public class SocketHandler {
 
-    private static final Logger LOGGER = Logger.getLogger(Controller.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(SocketHandler.class.getName());
     private static final String OK_MESSAGE = "OK";
     private static final int SERVER_PORT = 8080;
     private static final long READ_TIMEOUT = 10; // in seconds
