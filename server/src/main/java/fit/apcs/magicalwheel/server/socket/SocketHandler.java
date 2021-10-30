@@ -72,7 +72,7 @@ public class SocketHandler {
                     final var name = byteBufferToString(byteBuffer, numBytes);
                     final var player = new Player(name, clientChannel);
                     gamePlay.addPlayer(player);
-                    writeToClientChannel(clientChannel, OK_MESSAGE);
+                    writeStringToChannel(clientChannel, OK_MESSAGE);
                 } catch (RuntimeException ex) {
                     closeSocketChannel(clientChannel);
                 }
@@ -92,7 +92,7 @@ public class SocketHandler {
         return new String(byteArray, StandardCharsets.UTF_8);
     }
 
-    private static void writeToClientChannel(AsynchronousSocketChannel channel, String message) {
+    private static void writeStringToChannel(AsynchronousSocketChannel channel, String message) {
         channel.write(ByteBuffer.wrap(message.getBytes(StandardCharsets.UTF_8)));
     }
 
