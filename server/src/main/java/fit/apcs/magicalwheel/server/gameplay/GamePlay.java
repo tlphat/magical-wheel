@@ -9,20 +9,28 @@ import fit.apcs.magicalwheel.server.entity.Question;
 public class GamePlay {
 
     private static final int MAX_NUM_PLAYERS = 2;
+
     private final ConcurrentHashMap<Player, Integer> mapPlayerOrder = new ConcurrentHashMap<>();
     private final Question question = GameLoader.getInstance().getRandomQuestion();
     private final AtomicInteger currentNumPlayer = new AtomicInteger(0);
 
-    public boolean cannotBeStarted() {
-        return mapPlayerOrder.size() != MAX_NUM_PLAYERS;
+    public synchronized boolean canBeStarted() {
+        return mapPlayerOrder.size() == MAX_NUM_PLAYERS;
     }
 
-    public void addPlayer(Player player) {
+    public synchronized void addPlayer(Player player) {
+        if (canBeStarted()) {
+            throw new UnsupportedOperationException("There is enough players got connected");
+        }
         if (mapPlayerOrder.containsKey(player)) {
             throw new IllegalArgumentException(
                     String.format("Player with username %s is already existed", player.getName()));
         }
         mapPlayerOrder.put(player, currentNumPlayer.incrementAndGet());
+    }
+
+    public void start() {
+        // TODO: implement game logic
     }
 
 }

@@ -1,12 +1,16 @@
 package fit.apcs.magicalwheel.server.entity;
 
+import java.nio.channels.AsynchronousSocketChannel;
+
 public class Player {
 
     private final String name;
-    private int point; // = 0 when first initialized
+    private final AsynchronousSocketChannel socketChannel;
+    private int point = 0;
 
-    public Player(String name) {
-        this.name = name;
+    public Player(String name, AsynchronousSocketChannel socketChannel) {
+        this.name = name; // TODO: validate player name
+        this.socketChannel = socketChannel;
     }
 
     @Override
