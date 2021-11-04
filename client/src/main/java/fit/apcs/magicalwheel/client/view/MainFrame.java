@@ -1,16 +1,18 @@
 package fit.apcs.magicalwheel.client.view;
 
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.GridBagConstraints;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.io.Serial;
 import java.net.URL;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -19,11 +21,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import fit.apcs.magicalwheel.client.connection.Client;
 
 public class MainFrame extends JFrame {
 
     @Serial
     private static final long serialVersionUID = 7641338013687300073L;
+    private static final Logger LOGGER = Logger.getLogger(MainFrame.class.getName());
 
     private static final String GAME_NAME = "Magical Wheel";
 
@@ -65,7 +69,15 @@ public class MainFrame extends JFrame {
     }
 
     private void registerField() {
-        System.out.println("register field");
+        // TODO: (optional) disable the button to avoid clicking multiple times
+        try {
+            LOGGER.log(Level.INFO, "Button clicked");
+            final var client = Client.getInstance();
+            client.openConnection();
+            client.sendUsername("username");
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, "Error in connecting to server", ex);
+        }
     }
 
     private JLabel centralLabel() {
