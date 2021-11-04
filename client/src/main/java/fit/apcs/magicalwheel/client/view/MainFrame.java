@@ -34,13 +34,28 @@ public class MainFrame extends JFrame {
 
     public MainFrame() {
         setTitle(GAME_NAME);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setOnExitEvent();
         setExtendedState(MAXIMIZED_BOTH);
         setResizable(false);
         setIconImage(new ImageIcon(getImageURL("wheel.png")).getImage());
         getContentPane().setBackground(Color.BLACK);
         addMainPanel();
         setVisible(true);
+    }
+
+    private void setOnExitEvent() {
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                try {
+                    Client.getInstance().closeConnection();
+                    System.exit(0);
+                } catch (IOException ignore) {
+                    System.exit(1);
+                }
+            }
+        });
     }
 
     private void addMainPanel() {
