@@ -9,6 +9,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,16 +25,31 @@ public final class Client {
     private AsynchronousSocketChannel channel;
 
     private Client() {
-
+        try {
+            channel = AsynchronousSocketChannel.open();
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, "Cannot open socket channel", ex);
+            System.exit(1);
+        }
     }
 
     public static Client getInstance() {
         return INSTANCE;
     }
 
-    public void openConnection() throws IOException {
-        channel = AsynchronousSocketChannel.open();
-        channel.connect(new InetSocketAddress(SERVER_HOST, SERVER_PORT));
+    public void openConnection(Consumer<Void> onSuccessfulConnection) {
+        channel.connect(new InetSocketAddress(SERVER_HOST, SERVER_PORT), null,
+                        new CompletionHandler<Void, Void>() {
+            @Override
+            public void completed(Void result, Void attachment) {
+                onSuccessfulConnection.accept(null);
+            }
+
+            @Override
+            public void failed(Throwable ex, Void attachment) {
+                LOGGER.log(Level.SEVERE, "Cannot connect to server", ex);
+            }
+        });
     }
 
     public void closeConnection() throws IOException {
