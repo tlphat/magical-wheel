@@ -140,14 +140,12 @@ public class MainFrame extends JFrame {
     }
 
     private void onPlayButtonClickListener() {
+        playButton.setEnabled(false);
         final var username = usernameField.getText();
         if (isUsernameVerified(username)) {
             LOGGER.log(Level.INFO, "Button clicked");
             final var client = Client.getInstance();
-            client.openConnection(unused -> {
-                playButton.setEnabled(false);
-                client.sendUsername(username);
-            });
+            client.openConnection(unused -> client.sendUsername(username));
         }
     }
 
