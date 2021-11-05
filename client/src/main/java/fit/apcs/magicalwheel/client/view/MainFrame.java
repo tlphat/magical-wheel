@@ -1,7 +1,6 @@
 package fit.apcs.magicalwheel.client.view;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -36,9 +35,9 @@ public class MainFrame extends JFrame {
 
     private static final String GAME_NAME = "Magical Wheel";
 
-    JButton playButton;
-    JTextField usernameField;
-    JLabel message;
+    private JButton playButton;
+    private JTextField usernameField;
+    private JLabel message;
 
     public MainFrame() {
         setTitle(GAME_NAME);
@@ -67,15 +66,16 @@ public class MainFrame extends JFrame {
     }
 
     private void addMainPanel() {
-        JPanel mainPanel = new JPanel();
+        final var mainPanel = new JPanel();
 
+        // for display purpose only (to guarantee that this text always takes 1 line)
         message = new JLabel(" ");
         message.setForeground(Color.WHITE);
 
         mainPanel.setOpaque(false);
         mainPanel.setLayout(new GridBagLayout());
 
-        GridBagConstraints gbc = new GridBagConstraints();
+        final var gbc = new GridBagConstraints();
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.anchor = GridBagConstraints.NORTH;
         gbc.insets = new Insets(15,0,0,0);
@@ -85,7 +85,7 @@ public class MainFrame extends JFrame {
         mainPanel.add(playButton(), gbc);
         mainPanel.add(message, gbc);
 
-        this.add(mainPanel);
+        add(mainPanel);
     }
 
     private JPanel usernameField() {

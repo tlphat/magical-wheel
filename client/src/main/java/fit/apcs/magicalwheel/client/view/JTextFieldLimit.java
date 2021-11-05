@@ -1,24 +1,27 @@
 package fit.apcs.magicalwheel.client.view;
 
+import java.io.Serial;
+
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
 class JTextFieldLimit extends PlainDocument {
-    private int limit;
+
+    @Serial
+    private static final long serialVersionUID = -3832086433540107585L;
+
+    private final int limit;
+
     JTextFieldLimit(int limit) {
-       super();
-       this.limit = limit;
+        this.limit = limit;
     }
-    JTextFieldLimit(int limit, boolean upper) {
-       super();
-       this.limit = limit;
-    }
+
+    @Override
     public void insertString(int offset, String str, AttributeSet attr) throws BadLocationException {
-       if (str == null)
-          return;
-       if ((getLength() + str.length()) <= limit) {
+       if (str != null && (getLength() + str.length()) <= limit) {
           super.insertString(offset, str, attr);
        }
     }
- }
+
+}
