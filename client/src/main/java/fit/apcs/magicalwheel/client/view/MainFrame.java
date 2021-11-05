@@ -1,6 +1,7 @@
 package fit.apcs.magicalwheel.client.view;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -19,6 +20,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import fit.apcs.magicalwheel.client.connection.Client;
@@ -31,6 +33,8 @@ public class MainFrame extends JFrame {
 
     private static final String GAME_NAME = "Magical Wheel";
 
+    JButton playButton;
+    JTextField usernameField;
 
     public MainFrame() {
         setTitle(GAME_NAME);
@@ -66,30 +70,46 @@ public class MainFrame extends JFrame {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.anchor = GridBagConstraints.NORTH;
-        gbc.insets = new Insets(10,0,0,0);
+        gbc.insets = new Insets(15,0,0,0);
 
         mainPanel.add(centralLabel(), gbc);
+        mainPanel.add(usernameField(), gbc);
         mainPanel.add(playButton(), gbc);
 
         this.add(mainPanel);
     }
 
+    private JPanel usernameField() {
+        final var usernamePanel = new JPanel();
+        final var usernameLabel = new JLabel("Enter username: ");
+        usernameField = new JTextField(10);
+
+        usernameLabel.setForeground(Color.WHITE);
+        usernamePanel.setOpaque(false);
+        usernamePanel.add(usernameLabel);
+        usernamePanel.add(usernameField);
+
+        return usernamePanel;
+    }
+
     private JButton playButton() {
-        final var playButton = new JButton();
-        playButton.addActionListener(event -> onPlayButtonClickListener(playButton));
+        playButton = new JButton();
+        playButton.addActionListener(event -> onPlayButtonClickListener());
         playButton.setText("PLAY");
         playButton.setHorizontalAlignment(SwingConstants.CENTER);
         playButton.setVerticalAlignment(SwingConstants.CENTER);
         return playButton;
     }
 
-    private void onPlayButtonClickListener(JButton playButton) {
-        playButton.setEnabled(false);
+    private void onPlayButtonClickListener() {
+        final var username = usernameField.getText();
+        System.out.println(username);
+
         try {
             LOGGER.log(Level.INFO, "Button clicked");
             final var client = Client.getInstance();
             client.openConnection();
-            client.sendUsername("username");
+            client.sendUsername(username);
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Error in connecting to server", ex);
         }
