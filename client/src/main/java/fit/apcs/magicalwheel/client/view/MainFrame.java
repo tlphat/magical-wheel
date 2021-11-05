@@ -4,10 +4,7 @@ import java.awt.Color;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.GridBagConstraints;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.Serial;
 import java.net.URL;
 import java.util.Optional;
@@ -48,7 +45,7 @@ public class MainFrame extends JFrame {
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.anchor = GridBagConstraints.NORTH;
         gbc.insets = new Insets(10,0,0,0);
-        
+
         mainPanel.add(centralLabel(), gbc);
         mainPanel.add(playButton(), gbc);
 
@@ -57,15 +54,16 @@ public class MainFrame extends JFrame {
 
     private JButton playButton() {
         final var playButton = new JButton();
-        playButton.addActionListener(event -> registerField());
+        playButton.addActionListener(event -> onPlayButtonClickListener(playButton));
         playButton.setText("PLAY");
         playButton.setHorizontalAlignment(SwingConstants.CENTER);
         playButton.setVerticalAlignment(SwingConstants.CENTER);
         return playButton;
     }
 
-    private void registerField() {
+    private void onPlayButtonClickListener(JButton playButton) {
         System.out.println("register field");
+        playButton.setEnabled(false);
     }
 
     private JLabel centralLabel() {
