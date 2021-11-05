@@ -14,6 +14,7 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -22,6 +23,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import fit.apcs.magicalwheel.client.connection.Client;
 
@@ -35,6 +38,7 @@ public class MainFrame extends JFrame {
 
     JButton playButton;
     JTextField usernameField;
+    JLabel message;
 
     public MainFrame() {
         setTitle(GAME_NAME);
@@ -64,6 +68,10 @@ public class MainFrame extends JFrame {
 
     private void addMainPanel() {
         JPanel mainPanel = new JPanel();
+
+        message = new JLabel(" ");
+        message.setForeground(Color.WHITE);
+
         mainPanel.setOpaque(false);
         mainPanel.setLayout(new GridBagLayout());
 
@@ -75,6 +83,7 @@ public class MainFrame extends JFrame {
         mainPanel.add(centralLabel(), gbc);
         mainPanel.add(usernameField(), gbc);
         mainPanel.add(playButton(), gbc);
+        mainPanel.add(message, gbc);
 
         this.add(mainPanel);
     }
@@ -82,7 +91,8 @@ public class MainFrame extends JFrame {
     private JPanel usernameField() {
         final var usernamePanel = new JPanel();
         final var usernameLabel = new JLabel("Enter username: ");
-        usernameField = new JTextField(10);
+
+        handleUsernameField();
 
         usernameLabel.setForeground(Color.WHITE);
         usernamePanel.setOpaque(false);
@@ -90,6 +100,34 @@ public class MainFrame extends JFrame {
         usernamePanel.add(usernameField);
 
         return usernamePanel;
+    }
+
+    private void handleUsernameField() {
+        usernameField = new JTextField(10);
+        usernameField.setDocument(new JTextFieldLimit(10));
+        usernameField.getDocument().addDocumentListener(new DocumentListener() {
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                resetButtonAndMessage();   
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                resetButtonAndMessage();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                resetButtonAndMessage();
+            }
+
+            public void resetButtonAndMessage() {
+                message.setText(" ");
+                playButton.setEnabled(true);
+            }
+
+        });
     }
 
     private JButton playButton() {
@@ -103,16 +141,27 @@ public class MainFrame extends JFrame {
 
     private void onPlayButtonClickListener() {
         final var username = usernameField.getText();
-        System.out.println(username);
+        playButton.setEnabled(false);
 
-        try {
+        if (isUsernameVerified(username)) {
+            try {
             LOGGER.log(Level.INFO, "Button clicked");
             final var client = Client.getInstance();
             client.openConnection();
             client.sendUsername(username);
-        } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, "Error in connecting to server", ex);
+            } catch (IOException ex) {
+                LOGGER.log(Level.SEVERE, "Error in connecting to server", ex);
+            }
         }
+    }
+
+    private boolean isUsernameVerified(String username) {
+        final var pattern = "^[a-zA-Z0-9_]+$";
+        if (!Pattern.matches(pattern, username)) {
+            message.setText("Username must be composed by 'a'..'z', 'A'..'Z', '0'..'9', '_'");
+            return false;
+        }
+        return true;
     }
 
     private JLabel centralLabel() {
