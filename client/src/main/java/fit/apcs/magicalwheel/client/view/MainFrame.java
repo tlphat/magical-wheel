@@ -141,17 +141,13 @@ public class MainFrame extends JFrame {
 
     private void onPlayButtonClickListener() {
         final var username = usernameField.getText();
-        playButton.setEnabled(false);
-
         if (isUsernameVerified(username)) {
-            try {
             LOGGER.log(Level.INFO, "Button clicked");
             final var client = Client.getInstance();
-            client.openConnection();
-            client.sendUsername(username);
-            } catch (IOException ex) {
-                LOGGER.log(Level.SEVERE, "Error in connecting to server", ex);
-            }
+            client.openConnection(unused -> {
+                playButton.setEnabled(false);
+                client.sendUsername(username);
+            });
         }
     }
 
