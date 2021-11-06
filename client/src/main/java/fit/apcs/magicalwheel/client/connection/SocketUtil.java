@@ -1,5 +1,7 @@
 package fit.apcs.magicalwheel.client.connection;
 
+import java.io.BufferedReader;
+import java.io.StringReader;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.charset.StandardCharsets;
@@ -16,6 +18,12 @@ public final class SocketUtil {
         final var byteArray = new byte[numBytes];
         byteBuffer.flip().get(byteArray);
         return new String(byteArray, StandardCharsets.UTF_8);
+    }
+
+    public static BufferedReader byteBufferToReader(ByteBuffer byteBuffer, Integer numBytes) {
+        final var stringResult = byteBufferToString(byteBuffer, numBytes);
+        final var stringReader = new StringReader(stringResult);
+        return new BufferedReader(stringReader);
     }
 
     public static void writeStringToChannel(AsynchronousSocketChannel channel, String message) {

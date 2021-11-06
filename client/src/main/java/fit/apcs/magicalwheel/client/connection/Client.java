@@ -67,7 +67,24 @@ public final class Client {
             @Override
             public void completed(Integer numBytes, Void attachment) {
                 LOGGER.log(Level.INFO, "Response: {0}", SocketUtil.byteBufferToString(byteBuffer, numBytes));
-                // TODO: parse response message
+                try {
+                    final var reader = SocketUtil.byteBufferToReader(byteBuffer, numBytes);
+                    final var type = EventType.fromString(reader.readLine());
+                    if (type != EventType.JOIN_ROOM) {
+                        LOGGER.log(Level.WARNING, "Expect response of type {0}, got {1}",
+                                   new Object[]{EventType.JOIN_ROOM, type});
+                        channel.read(byteBuffer, TIMEOUT, TimeUnit.SECONDS, null, this);
+                    }
+                    final var isOk = Integer.parseInt(reader.readLine()) != 0;
+                    if (!isOk) {
+                        // TODO: parse the error code and print the error to user
+                    }
+                    // TODO: get the list of current user in the room
+                    // TODO: open another pannel
+                } catch (IOException ex) {
+                    LOGGER.log(Level.SEVERE, "Error in parsing response", ex);
+                    channel.read(byteBuffer, TIMEOUT, TimeUnit.SECONDS, null, this);
+                }
             }
 
             @Override
