@@ -4,7 +4,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
-public enum ReturnCode {
+public enum StatusCode {
 
     OK(0, "OK"),
     USERNAME_EXISTED(1, "Username has already existed"),
@@ -12,11 +12,11 @@ public enum ReturnCode {
     SERVER_ERROR(3, "Internal server error"),
     WRONG_FORMAT(4, " ");
 
-    private static final Logger LOGGER = Logger.getLogger(ReturnCode.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(StatusCode.class.getName());
     private final int code;
     private final String message;
 
-    ReturnCode(int code, String message) {
+    StatusCode(int code, String message) {
         this.code = code;
         this.message = message;
     }
@@ -29,7 +29,7 @@ public enum ReturnCode {
         return message;
     }
 
-    public static ReturnCode fromString(String str) {
+    public static StatusCode fromString(String str) {
         return Stream.of(values())
                      .filter(s -> String.valueOf(s.getCode()).equalsIgnoreCase(str))
                      .findFirst()

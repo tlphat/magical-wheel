@@ -13,7 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import fit.apcs.magicalwheel.client.constant.EventType;
-import fit.apcs.magicalwheel.client.constant.ReturnCode;
+import fit.apcs.magicalwheel.client.constant.StatusCode;
 import fit.apcs.magicalwheel.client.model.Player;
 import fit.apcs.magicalwheel.client.view.WelcomePanel;
 
@@ -67,6 +67,7 @@ public final class Client {
     }
 
     private void waitForJoinGameResponse(WelcomePanel panel) {
+        // TODO: separate the completion handler into a new class
         final var byteBuffer = ByteBuffer.allocate(100);
         final var responseHandler = new CompletionHandler<Integer, Void>() {
             @Override
@@ -79,7 +80,7 @@ public final class Client {
                     joinWaitingRoom(reader);
                 } catch (IOException ex) {
                     LOGGER.log(Level.SEVERE, "Error in parsing response", ex);
-                    panel.setMessage(ReturnCode.WRONG_FORMAT.getMessage());
+                    panel.setMessage(StatusCode.WRONG_FORMAT.getMessage());
                     channel.read(byteBuffer, TIMEOUT, TimeUnit.SECONDS, null, this);
                 }
             }
@@ -95,9 +96,9 @@ public final class Client {
             }
 
             private void verifyReturnCode(BufferedReader reader) throws IOException {
-                final var returnCode = ReturnCode.fromString(reader.readLine());
-                if (returnCode != ReturnCode.OK) {
-                    panel.setMessage(returnCode.getMessage());
+                final var statusCode = StatusCode.fromString(reader.readLine());
+                if (statusCode != StatusCode.OK) {
+                    panel.setMessage(statusCode.getMessage());
                     throw new IllegalStateException("Response not OK");
                 }
             }
