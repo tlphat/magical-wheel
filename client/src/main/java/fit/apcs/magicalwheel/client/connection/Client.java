@@ -83,7 +83,7 @@ public final class Client {
         final var responseHandler = new CompletionHandler<Integer, Void>() {
             @Override
             public void completed(Integer numBytes, Void attachment) {
-                LOGGER.log(Level.INFO, "Response: {0}", SocketUtil.byteBufferToString(byteBuffer, numBytes));
+                LOGGER.log(Level.INFO, "Response:\n{0}", SocketUtil.byteBufferToString(byteBuffer, numBytes));
                 try {
                     final var reader = SocketUtil.byteBufferToReader(byteBuffer, numBytes);
                     verifyEventType(reader);
