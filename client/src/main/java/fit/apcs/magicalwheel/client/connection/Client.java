@@ -1,8 +1,5 @@
 package fit.apcs.magicalwheel.client.connection;
 
-import static fit.apcs.magicalwheel.client.connection.SocketUtil.getMessageFromLines;
-import static fit.apcs.magicalwheel.client.connection.SocketUtil.writeStringToChannel;
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -60,8 +57,8 @@ public final class Client {
 
     public void sendUsername(String username) {
         // TODO: preprocess username (trim, uppercase, etc.) if necessary
-        final var message = getMessageFromLines(EventType.JOIN_ROOM, username);
-        writeStringToChannel(channel, message);
+        final var message = SocketUtil.getMessageFromLines(EventType.JOIN_ROOM, username);
+        SocketUtil.writeStringToChannel(channel, message);
         waitForJoinGameResponse();
     }
 
