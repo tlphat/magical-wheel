@@ -1,34 +1,33 @@
 package fit.apcs.magicalwheel.client.view;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.GridBagConstraints;
-
-import java.util.List;
+import java.io.Serial;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-import javax.swing.border.Border;
-import javax.swing.text.FlowView;
 
 public class WaitingPanel extends JPanel {
-    private Player mainPlayer;
-    private List<Player> waitingPlayers;
+
+    @Serial
+    private static final long serialVersionUID = -9181686575965110043L;
+    private static final int PLAY_ELEMENT_HEIGHT = 30;
+    private static final int MAX_PLAYERS = 10;
+
+    private final transient Player mainPlayer;
+    private final transient List<Player> waitingPlayers;
     private JLabel message;
     private JPanel waitingList;
     private int currentNumber;
-    private int maximumPlayers = 10;
-    private final int PLAY_ELEMENT_HEIGHT = 30;
 
     public WaitingPanel(List<String> currentPlayers) {        
         //map usernames from server to Player
@@ -37,8 +36,8 @@ public class WaitingPanel extends JPanel {
         for (String username: currentPlayers) {
             waitingPlayers.add(new Player(username, order++));
         }
-        this.currentNumber = waitingPlayers.size();
-        this.mainPlayer = waitingPlayers.get(currentNumber - 1);
+        currentNumber = waitingPlayers.size();
+        mainPlayer = waitingPlayers.get(currentNumber - 1);
         
         setOpaque(false);
         setLayout(new GridBagLayout());
@@ -71,8 +70,8 @@ public class WaitingPanel extends JPanel {
     }
 
     private JPanel waitingList() {
-        waitingList = new JPanel(new GridLayout(maximumPlayers, 1));
-        waitingList.setPreferredSize(new Dimension(300, PLAY_ELEMENT_HEIGHT * maximumPlayers));
+        waitingList = new JPanel(new GridLayout(MAX_PLAYERS, 1));
+        waitingList.setPreferredSize(new Dimension(300, PLAY_ELEMENT_HEIGHT * MAX_PLAYERS));
         waitingList.setBorder(BorderFactory.createLineBorder(Color.WHITE));
         waitingList.setOpaque(false);
         for (Player player: waitingPlayers) {
@@ -129,7 +128,7 @@ public class WaitingPanel extends JPanel {
     }
 
     private void setWaitingMessage() {
-        message.setText("Please wait for more " + (maximumPlayers - currentNumber) + " players to join ...");
+        message.setText("Please wait for more " + (MAX_PLAYERS - currentNumber) + " players to join ...");
     }
 
     private JLabel roomTitle() {
