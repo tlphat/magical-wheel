@@ -11,6 +11,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import fit.apcs.magicalwheel.client.constant.EventType;
+import fit.apcs.magicalwheel.client.constant.ReturnCode;
+import fit.apcs.magicalwheel.client.view.WelcomePanel;
 
 public final class Client {
 
@@ -55,13 +57,13 @@ public final class Client {
         channel.close();
     }
 
-    public void sendUsername(String username) {
+    public void sendUsername(String username, WelcomePanel panel) {
         final var message = SocketUtil.getMessageFromLines(EventType.JOIN_ROOM, username.trim());
         SocketUtil.writeStringToChannel(channel, message);
-        waitForJoinGameResponse();
+        waitForJoinGameResponse(panel);
     }
 
-    private void waitForJoinGameResponse() {
+    private void waitForJoinGameResponse(WelcomePanel panel) {
         final var byteBuffer = ByteBuffer.allocate(100);
         final var responseHandler = new CompletionHandler<Integer, Void>() {
             @Override
@@ -69,20 +71,26 @@ public final class Client {
                 LOGGER.log(Level.INFO, "Response: {0}", SocketUtil.byteBufferToString(byteBuffer, numBytes));
                 try {
                     final var reader = SocketUtil.byteBufferToReader(byteBuffer, numBytes);
+
                     final var type = EventType.fromString(reader.readLine());
                     if (type != EventType.JOIN_ROOM) {
                         LOGGER.log(Level.WARNING, "Expect response of type {0}, got {1}",
                                    new Object[]{EventType.JOIN_ROOM, type});
                         channel.read(byteBuffer, TIMEOUT, TimeUnit.SECONDS, null, this);
+                        return;
                     }
-                    final var isOk = Integer.parseInt(reader.readLine()) != 0;
-                    if (!isOk) {
-                        // TODO: parse the error code and print the error to user
+
+                    final var returnCode = ReturnCode.fromString(reader.readLine());
+                    if (returnCode != ReturnCode.OK) {
+                        panel.setMessage(returnCode.getMessage());
+                        return;
                     }
+
                     // TODO: get the list of current user in the room
                     // TODO: open another pannel
                 } catch (IOException ex) {
                     LOGGER.log(Level.SEVERE, "Error in parsing response", ex);
+                    panel.setMessage(ReturnCode.WRONG_FORMAT.getMessage());
                     channel.read(byteBuffer, TIMEOUT, TimeUnit.SECONDS, null, this);
                 }
             }

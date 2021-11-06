@@ -3,6 +3,7 @@ package fit.apcs.magicalwheel.client.view;
 import java.awt.GridBagLayout;
 import java.awt.Font;
 import java.awt.Insets;
+import java.io.Serial;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -24,6 +25,9 @@ import fit.apcs.magicalwheel.client.connection.Client;
 public class WelcomePanel extends JPanel {
     
     private static final Logger LOGGER = Logger.getLogger(WelcomePanel.class.getName());
+
+    @Serial
+    private static final long serialVersionUID = 274489371310292356L;
 
     private JButton playButton;
     private JTextField usernameField;
@@ -105,7 +109,7 @@ public class WelcomePanel extends JPanel {
         if (isUsernameVerified(username)) {
             LOGGER.log(Level.INFO, "Button clicked");
             final var client = Client.getInstance();
-            client.openConnection(unused -> client.sendUsername(username));
+            client.openConnection(unused -> client.sendUsername(username, this));
         }
     }
 
@@ -116,6 +120,10 @@ public class WelcomePanel extends JPanel {
             return false;
         }
         return true;
+    }
+
+    public void setMessage(String text) {
+        message.setText(text);
     }
 
     private JLabel centralLabel() {
