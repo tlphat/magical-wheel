@@ -1,8 +1,5 @@
 package fit.apcs.magicalwheel.server.connection;
 
-import static fit.apcs.magicalwheel.server.connection.SocketUtil.byteBufferToString;
-import static fit.apcs.magicalwheel.server.connection.SocketUtil.closeSocketChannel;
-import static fit.apcs.magicalwheel.server.connection.SocketUtil.writeStringToChannel;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 import java.io.IOException;
@@ -81,19 +78,19 @@ public final class Server {
             @Override
             public void completed(Integer numBytes, Void attachment) {
                 try {
-                    final var name = byteBufferToString(byteBuffer, numBytes);
+                    final var name = SocketUtil.byteBufferToString(byteBuffer, numBytes);
                     final var player = new Player(name, clientChannel);
                     gamePlay.addPlayer(player);
-                    writeStringToChannel(clientChannel, OK_MESSAGE);
+                    SocketUtil.writeStringToChannel(clientChannel, OK_MESSAGE);
                 } catch (RuntimeException ex) {
-                    closeSocketChannel(clientChannel);
+                    SocketUtil.closeSocketChannel(clientChannel);
                 }
             }
 
             @Override
             public void failed(Throwable exc, Void attachment) {
                 LOGGER.log(Level.WARNING, "Timeout waiting for name", exc);
-                closeSocketChannel(clientChannel);
+                SocketUtil.closeSocketChannel(clientChannel);
             }
         });
     }
