@@ -129,7 +129,7 @@ public class WaitingPanel extends JPanel {
     }
 
     private void setWaitingMessage() {
-        message.setText("Please wait for more " + (maximumPlayers - currentNumber) + " players more to join ...");
+        message.setText("Please wait for more " + (maximumPlayers - currentNumber) + " players to join ...");
     }
 
     private JLabel roomTitle() {
