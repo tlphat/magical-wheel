@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.Serial;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -21,15 +23,21 @@ public class MainFrame extends JFrame {
         setExtendedState(MAXIMIZED_BOTH);
         setResizable(false);
         setIconImage(new ImageIcon(ResourceUtil.getImageURL("wheel.png")).getImage());
-        //addWelcomePanel();
+        //addWelcomePanel(); // TODO: uncomment this line to implement the navigation
         switchToWaitingRoom();
         setBackground(Color.BLACK);
         setVisible(true);
     }
 
     private void switchToWaitingRoom() {
-        final var waitingPanel = new WaitingPanel(new Player("use", 1));
+        final List<String> usernames = new ArrayList<>();
+        usernames.add("tlphat");
+        usernames.add("hdmthao");
+        usernames.add("pnmthy");
+        usernames.add("dungplt");
+        final var waitingPanel = new WaitingPanel(usernames);
         setContentPane(waitingPanel);
+        waitingPanel.addNewPlayerToRoom("hello");
     }
 
     private void setOnExitEvent() {
@@ -43,8 +51,10 @@ public class MainFrame extends JFrame {
         });
     }
 
+    @SuppressWarnings("unused")
     private void addWelcomePanel() {
         final var welcomePanel = new WelcomePanel();
         setContentPane(welcomePanel);
     }
+
 }

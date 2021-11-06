@@ -1,15 +1,15 @@
 package fit.apcs.magicalwheel.client.view;
 
-import java.awt.GridBagLayout;
+import java.awt.Color;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-import java.awt.Color;
-import java.awt.GridBagConstraints;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -25,14 +25,13 @@ import fit.apcs.magicalwheel.client.model.Player;
 
 public class WelcomePanel extends JPanel {
     
-    private static final Logger LOGGER = Logger.getLogger(WelcomePanel.class.getName());
-
     @Serial
-    private static final long serialVersionUID = 274489371310292356L;
+    private static final long serialVersionUID = 6624186548473295189L;
+    private static final Logger LOGGER = Logger.getLogger(WelcomePanel.class.getName());
 
     private JButton playButton;
     private JTextField usernameField;
-    private JLabel message;
+    private final JLabel message;
 
     public WelcomePanel() {
         // for display purpose only (to guarantee that this text always takes 1 line)
