@@ -13,6 +13,8 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import fit.apcs.magicalwheel.client.constant.EventType;
+
 public final class Client {
 
     private static final Logger LOGGER = Logger.getLogger(Client.class.getName());
@@ -58,7 +60,7 @@ public final class Client {
 
     public void sendUsername(String username) {
         // TODO: preprocess username (trim, uppercase, etc.) if necessary
-        final var message = getMessageFromLines(1, username);
+        final var message = getMessageFromLines(EventType.JOIN_ROOM, username);
         writeStringToChannel(channel, message);
         waitForJoinGameResponse();
     }
