@@ -8,4 +8,12 @@ public class Player {
         this.username = username;
         this.order = order;
     }
+
+    public String getUsername() {
+        return this.username;
+    }
+
+    public int getOrder() {
+        return this.order;
+    }
 }

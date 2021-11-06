@@ -6,6 +6,8 @@ import java.awt.event.WindowEvent;
 import java.awt.FlowLayout;
 import java.io.IOException;
 import java.io.Serial;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
@@ -33,8 +35,14 @@ public class MainFrame extends JFrame {
     }
 
     private void switchToWaitingRoom() {
-        final var waitingPanel = new WaitingPanel(new Player("use", 1));
+        List<String> usernames = new ArrayList<>();
+        usernames.add("tlphat");
+        usernames.add("hdmthao");
+        usernames.add("pnmthy");
+        usernames.add("dungplt");
+        final var waitingPanel = new WaitingPanel(usernames);
         setContentPane(waitingPanel);
+        waitingPanel.addNewPlayerToRoom("hello");
     }
 
     private void setOnExitEvent() {
