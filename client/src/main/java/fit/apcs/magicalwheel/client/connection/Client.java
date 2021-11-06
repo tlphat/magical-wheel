@@ -56,8 +56,7 @@ public final class Client {
     }
 
     public void sendUsername(String username) {
-        // TODO: preprocess username (trim, uppercase, etc.) if necessary
-        final var message = SocketUtil.getMessageFromLines(EventType.JOIN_ROOM, username);
+        final var message = SocketUtil.getMessageFromLines(EventType.JOIN_ROOM, username.trim());
         SocketUtil.writeStringToChannel(channel, message);
         waitForJoinGameResponse();
     }
