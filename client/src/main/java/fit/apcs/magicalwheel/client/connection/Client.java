@@ -29,6 +29,10 @@ public final class Client {
     private AsynchronousSocketChannel channel;
 
     private Client() {
+        openChannel();
+    }
+
+    private void openChannel() {
         try {
             channel = AsynchronousSocketChannel.open();
         } catch (IOException ex) {
@@ -42,6 +46,9 @@ public final class Client {
     }
 
     public void openConnection(Consumer<Void> onSuccessfulConnection) {
+        if (!channel.isOpen()) {
+            openChannel();
+        }
         channel.connect(new InetSocketAddress(SERVER_HOST, SERVER_PORT), null,
                         new CompletionHandler<Void, Void>() {
             @Override
@@ -56,8 +63,12 @@ public final class Client {
         });
     }
 
-    public void closeConnection() throws IOException {
-        channel.close();
+    public void closeConnection() {
+        try {
+            channel.close();
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, "Error in closing connection", ex);
+        }
     }
 
     public void sendUsername(String username, WelcomePanel panel) {
@@ -81,7 +92,10 @@ public final class Client {
                 } catch (IOException ex) {
                     LOGGER.log(Level.SEVERE, "Error in parsing response", ex);
                     panel.setMessage(StatusCode.WRONG_FORMAT.getMessage());
-                    channel.read(byteBuffer, TIMEOUT, TimeUnit.SECONDS, null, this);
+                    closeConnection();
+                } catch (RuntimeException ex) {
+                    LOGGER.log(Level.SEVERE, "Response is not OK", ex);
+                    closeConnection();
                 }
             }
 
@@ -90,7 +104,6 @@ public final class Client {
                 if (type != EventType.JOIN_ROOM) {
                     LOGGER.log(Level.WARNING, "Expect response of type {0}, got {1}",
                                new Object[]{EventType.JOIN_ROOM, type});
-                    channel.read(byteBuffer, TIMEOUT, TimeUnit.SECONDS, null, this);
                     throw new IllegalArgumentException("Wrong event type");
                 }
             }
@@ -99,7 +112,7 @@ public final class Client {
                 final var statusCode = StatusCode.fromString(reader.readLine());
                 if (statusCode != StatusCode.OK) {
                     panel.setMessage(statusCode.getMessage());
-                    throw new IllegalStateException("Response not OK");
+                    throw new IllegalStateException(statusCode.getMessage());
                 }
             }
 
