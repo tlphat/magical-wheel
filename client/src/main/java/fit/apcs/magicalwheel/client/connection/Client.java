@@ -1,10 +1,12 @@
 package fit.apcs.magicalwheel.client.connection;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.logging.Level;
@@ -12,6 +14,7 @@ import java.util.logging.Logger;
 
 import fit.apcs.magicalwheel.client.constant.EventType;
 import fit.apcs.magicalwheel.client.constant.ReturnCode;
+import fit.apcs.magicalwheel.client.model.Player;
 import fit.apcs.magicalwheel.client.view.WelcomePanel;
 
 public final class Client {
@@ -71,28 +74,43 @@ public final class Client {
                 LOGGER.log(Level.INFO, "Response: {0}", SocketUtil.byteBufferToString(byteBuffer, numBytes));
                 try {
                     final var reader = SocketUtil.byteBufferToReader(byteBuffer, numBytes);
-
-                    final var type = EventType.fromString(reader.readLine());
-                    if (type != EventType.JOIN_ROOM) {
-                        LOGGER.log(Level.WARNING, "Expect response of type {0}, got {1}",
-                                   new Object[]{EventType.JOIN_ROOM, type});
-                        channel.read(byteBuffer, TIMEOUT, TimeUnit.SECONDS, null, this);
-                        return;
-                    }
-
-                    final var returnCode = ReturnCode.fromString(reader.readLine());
-                    if (returnCode != ReturnCode.OK) {
-                        panel.setMessage(returnCode.getMessage());
-                        return;
-                    }
-
-                    // TODO: get the list of current user in the room
-                    // TODO: open another pannel
+                    verifyEventType(reader);
+                    verifyReturnCode(reader);
+                    joinWaitingRoom(reader);
                 } catch (IOException ex) {
                     LOGGER.log(Level.SEVERE, "Error in parsing response", ex);
                     panel.setMessage(ReturnCode.WRONG_FORMAT.getMessage());
                     channel.read(byteBuffer, TIMEOUT, TimeUnit.SECONDS, null, this);
                 }
+            }
+
+            private void verifyEventType(BufferedReader reader) throws IOException {
+                final var type = EventType.fromString(reader.readLine());
+                if (type != EventType.JOIN_ROOM) {
+                    LOGGER.log(Level.WARNING, "Expect response of type {0}, got {1}",
+                               new Object[]{EventType.JOIN_ROOM, type});
+                    channel.read(byteBuffer, TIMEOUT, TimeUnit.SECONDS, null, this);
+                    throw new IllegalArgumentException("Wrong event type");
+                }
+            }
+
+            private void verifyReturnCode(BufferedReader reader) throws IOException {
+                final var returnCode = ReturnCode.fromString(reader.readLine());
+                if (returnCode != ReturnCode.OK) {
+                    panel.setMessage(returnCode.getMessage());
+                    throw new IllegalStateException("Response not OK");
+                }
+            }
+
+            private void joinWaitingRoom(BufferedReader reader) throws IOException {
+                final var maxNumPlayers = Integer.parseInt(reader.readLine());
+                final var curNumPlayers = Integer.parseInt(reader.readLine());
+                final var listPlayers = new ArrayList<Player>();
+                for (var order = 0; order < curNumPlayers; ++order) {
+                    final var username = reader.readLine().trim();
+                    listPlayers.add(new Player(order, username));
+                }
+                panel.joinWaitingRoom(maxNumPlayers, listPlayers);
             }
 
             @Override

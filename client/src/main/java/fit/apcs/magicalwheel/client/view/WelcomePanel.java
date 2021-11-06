@@ -4,6 +4,7 @@ import java.awt.GridBagLayout;
 import java.awt.Font;
 import java.awt.Insets;
 import java.io.Serial;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -20,7 +21,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import fit.apcs.magicalwheel.client.connection.Client;
-
+import fit.apcs.magicalwheel.client.model.Player;
 
 public class WelcomePanel extends JPanel {
     
@@ -139,4 +140,9 @@ public class WelcomePanel extends JPanel {
         label.setVerticalAlignment(SwingConstants.CENTER);
         return label;
     }
+
+    public void joinWaitingRoom(int maxNumPlayers, ArrayList<Player> listPlayers) {
+        // TODO: switch to waiting room
+    }
+
 }
