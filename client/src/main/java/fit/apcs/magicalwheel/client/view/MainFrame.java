@@ -3,6 +3,7 @@ package fit.apcs.magicalwheel.client.view;
 import java.awt.Color;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.FlowLayout;
 import java.io.IOException;
 import java.io.Serial;
 import java.util.logging.Logger;
@@ -25,9 +26,15 @@ public class MainFrame extends JFrame {
         setExtendedState(MAXIMIZED_BOTH);
         setResizable(false);
         setIconImage(new ImageIcon(ResourceUtil.getImageURL("wheel.png")).getImage());
-        getContentPane().setBackground(Color.BLACK);
-        addWelcomePanel();
+        //addWelcomePanel();
+        switchToWaitingRoom();
+        setBackground(Color.BLACK);
         setVisible(true);
+    }
+
+    private void switchToWaitingRoom() {
+        final var waitingPanel = new WaitingPanel(new Player("use", 1));
+        setContentPane(waitingPanel);
     }
 
     private void setOnExitEvent() {
@@ -47,6 +54,6 @@ public class MainFrame extends JFrame {
 
     private void addWelcomePanel() {
         final var welcomePanel = new WelcomePanel();
-        add(welcomePanel);
+        setContentPane(welcomePanel);
     }
 }
