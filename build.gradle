@@ -17,6 +17,7 @@ configure(allprojects) {
     }
 
     jar {
+        // TODO: (optional) research & improve the jar build strategy
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         from {
             configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
