@@ -1,0 +1,31 @@
+buildscript {
+    ext {
+        APPLICATION_MODULE_NAMES = ['server', 'client']
+    }
+}
+
+configure(allprojects) {
+    if (APPLICATION_MODULE_NAMES.contains(project.name)) {
+        apply plugin: 'java'
+        apply plugin: 'application'
+    }
+
+    apply plugin: 'java-library'
+
+    repositories {
+        mavenCentral()
+    }
+
+    jar {
+        // TODO: (optional) research & improve the jar build strategy
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        from {
+            configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+        }
+    }
+
+    tasks.named('test') {
+        useJUnitPlatform()
+    }
+}
+

@@ -1,16 +1,20 @@
-package fit.apcs.magicalwheel.client.constant;
+package fit.apcs.magicalwheel.lib.constant;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
+/**
+ * Use to represent status code of a request from client.
+ * Its code should be attached to the response right after the EventType field.
+ */
 public enum StatusCode {
 
     OK(0, "OK"),
     USERNAME_EXISTED(1, "Username has already existed"),
     USERNAME_INVALID(2, "Username is invalid"),
     SERVER_ERROR(3, "Internal server error"),
-    WRONG_FORMAT(4, " ");
+    WRONG_FORMAT(4, "The message is in wrong format");
 
     private static final Logger LOGGER = Logger.getLogger(StatusCode.class.getName());
     private final int code;
