@@ -11,6 +11,9 @@ import javax.swing.JFrame;
 
 import fit.apcs.magicalwheel.client.connection.Client;
 import fit.apcs.magicalwheel.client.model.Player;
+import fit.apcs.magicalwheel.client.view.panel.WaitingPanel;
+import fit.apcs.magicalwheel.client.view.panel.WelcomePanel;
+import fit.apcs.magicalwheel.client.view.util.ResourceUtil;
 
 public class MainFrame extends JFrame {
 

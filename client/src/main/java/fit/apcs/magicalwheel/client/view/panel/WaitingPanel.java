@@ -1,4 +1,4 @@
-package fit.apcs.magicalwheel.client.view;
+package fit.apcs.magicalwheel.client.view.panel;
 
 import java.awt.Color;
 import java.awt.Dimension;

@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 import fit.apcs.magicalwheel.client.constant.EventType;
 import fit.apcs.magicalwheel.client.constant.StatusCode;
 import fit.apcs.magicalwheel.client.model.Player;
-import fit.apcs.magicalwheel.client.view.WelcomePanel;
+import fit.apcs.magicalwheel.client.view.panel.WelcomePanel;
 
 public final class Client {
 

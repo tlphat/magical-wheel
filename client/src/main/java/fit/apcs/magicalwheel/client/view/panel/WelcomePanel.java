@@ -1,4 +1,4 @@
-package fit.apcs.magicalwheel.client.view;
+package fit.apcs.magicalwheel.client.view.panel;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -22,6 +22,9 @@ import javax.swing.event.DocumentListener;
 
 import fit.apcs.magicalwheel.client.connection.Client;
 import fit.apcs.magicalwheel.client.model.Player;
+import fit.apcs.magicalwheel.client.view.document.JTextFieldLimit;
+import fit.apcs.magicalwheel.client.view.MainFrame;
+import fit.apcs.magicalwheel.client.view.util.ResourceUtil;
 
 public class WelcomePanel extends JPanel {
     
