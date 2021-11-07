@@ -1,38 +1,54 @@
-package fit.apcs.magicalwheel.client.connection;
+package fit.apcs.magicalwheel.client.connection.responsehandler;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.channels.CompletionHandler;
 import java.util.ArrayList;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import fit.apcs.magicalwheel.client.constant.EventType;
-import fit.apcs.magicalwheel.client.constant.StatusCode;
+import fit.apcs.magicalwheel.client.connection.Client;
 import fit.apcs.magicalwheel.client.model.Player;
+import fit.apcs.magicalwheel.client.view.panel.WelcomePanel;
+import fit.apcs.magicalwheel.lib.constant.EventType;
+import fit.apcs.magicalwheel.lib.constant.StatusCode;
+import fit.apcs.magicalwheel.lib.util.SocketReadUtil;
 
 public class JoinGameResponseHandler implements CompletionHandler<Integer, Void> {
 
+    private static final Logger LOGGER = Logger.getLogger(JoinGameResponseHandler.class.getName());
 
+    private final ByteBuffer byteBuffer;
+    private final WelcomePanel panel;
+    private final Client client;
+
+    public JoinGameResponseHandler(ByteBuffer byteBuffer, WelcomePanel panel, Client client) {
+        this.byteBuffer = byteBuffer;
+        this.panel = panel;
+        this.client = client;
+    }
 
     @Override
     public void completed(Integer numBytes, Void attachment) {
-        LOGGER.log(Level.INFO, "Response:\n{0}", SocketUtil.byteBufferToString(byteBuffer, numBytes));
+        LOGGER.log(Level.INFO, "Response:\n{0}",
+                   SocketReadUtil.byteBufferToString(byteBuffer, numBytes));
         try {
-            final var reader = SocketUtil.byteBufferToReader(byteBuffer, numBytes);
+            final var reader = SocketReadUtil.byteBufferToReader(byteBuffer, numBytes);
             verifyEventType(reader);
             verifyReturnCode(reader);
             joinWaitingRoom(reader);
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Error in parsing response", ex);
             panel.setMessage(StatusCode.WRONG_FORMAT.getMessage());
-            closeConnection();
+            client.closeConnection();
         } catch (RuntimeException ex) {
             LOGGER.log(Level.SEVERE, "Response is not OK", ex);
-            closeConnection();
+            client.closeConnection();
         }
     }
 
-    private void verifyEventType(BufferedReader reader) throws IOException {
+    private static void verifyEventType(BufferedReader reader) throws IOException {
         final var type = EventType.fromString(reader.readLine());
         if (type != EventType.JOIN_ROOM) {
             LOGGER.log(Level.WARNING, "Expect response of type {0}, got {1}",
@@ -61,7 +77,7 @@ public class JoinGameResponseHandler implements CompletionHandler<Integer, Void>
     }
 
     @Override
-    public void failed(Throwable exc, Void attachment) {
+    public void failed(Throwable ex, Void attachment) {
         LOGGER.log(Level.WARNING, "Cannot get response from server", ex);
     }
 
