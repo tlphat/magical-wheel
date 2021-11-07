@@ -1,28 +1,17 @@
-plugins {
-    id 'application'
-}
-
 jar {
     manifest {
         attributes (
                 'Main-Class': 'fit.apcs.magicalwheel.server.Application'
         )
     }
-}
-
-repositories {
-    mavenCentral()
+    dependsOn(':lib:jar')
 }
 
 dependencies {
-    implementation 'com.google.guava:guava:30.1-jre'
+    implementation project(':lib')
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
 }
 
 application {
     mainClass = 'fit.apcs.magicalwheel.server.Application'
-}
-
-tasks.named('test') {
-    useJUnitPlatform()
 }
