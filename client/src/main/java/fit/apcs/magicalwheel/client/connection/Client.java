@@ -120,7 +120,7 @@ public final class Client {
                 final var maxNumPlayers = Integer.parseInt(reader.readLine());
                 final var curNumPlayers = Integer.parseInt(reader.readLine());
                 final var listPlayers = new ArrayList<Player>();
-                for (var order = 0; order < curNumPlayers; ++order) {
+                for (var order = 1; order <= curNumPlayers; ++order) {
                     final var username = reader.readLine().trim();
                     listPlayers.add(new Player(order, username));
                 }

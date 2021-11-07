@@ -6,7 +6,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.io.Serial;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -29,11 +29,14 @@ public class WelcomePanel extends JPanel {
     private static final long serialVersionUID = 6624186548473295189L;
     private static final Logger LOGGER = Logger.getLogger(WelcomePanel.class.getName());
 
+    private final JLabel message;
+    private final MainFrame mainFrame;
     private JButton playButton;
     private JTextField usernameField;
-    private final JLabel message;
 
-    public WelcomePanel() {
+    public WelcomePanel(MainFrame mainFrame) {
+        this.mainFrame = mainFrame;
+
         // for display purpose only (to guarantee that this text always takes 1 line)
         message = new JLabel(" ");
         message.setForeground(Color.WHITE);
@@ -126,6 +129,7 @@ public class WelcomePanel extends JPanel {
         message.setText(text);
     }
 
+    @SuppressWarnings("MethodMayBeStatic")
     private JLabel centralLabel() {
         final var label = new JLabel();
         label.setText(ResourceUtil.GAME_NAME);
@@ -140,8 +144,8 @@ public class WelcomePanel extends JPanel {
         return label;
     }
 
-    public void joinWaitingRoom(int maxNumPlayers, ArrayList<Player> listPlayers) {
-        // TODO: switch to waiting room
+    public void joinWaitingRoom(int maxNumPlayers, List<Player> listPlayers) {
+        mainFrame.switchToWaitingRoom(maxNumPlayers, listPlayers);
     }
 
 }
