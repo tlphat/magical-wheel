@@ -12,10 +12,12 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import fit.apcs.magicalwheel.client.constant.EventType;
-import fit.apcs.magicalwheel.client.constant.StatusCode;
 import fit.apcs.magicalwheel.client.model.Player;
 import fit.apcs.magicalwheel.client.view.panel.WelcomePanel;
+import fit.apcs.magicalwheel.lib.constant.EventType;
+import fit.apcs.magicalwheel.lib.constant.StatusCode;
+import fit.apcs.magicalwheel.lib.util.SocketReadUtil;
+import fit.apcs.magicalwheel.lib.util.SocketWriteUtil;
 
 public final class Client {
 
@@ -72,8 +74,8 @@ public final class Client {
     }
 
     public void sendUsername(String username, WelcomePanel panel) {
-        final var message = SocketUtil.getMessageFromLines(EventType.JOIN_ROOM, username.trim());
-        SocketUtil.writeStringToChannel(channel, message);
+        final var message = SocketReadUtil.getMessageFromLines(EventType.JOIN_ROOM, username.trim());
+        SocketWriteUtil.writeStringToChannel(channel, message);
         waitForJoinGameResponse(panel);
     }
 
@@ -83,9 +85,10 @@ public final class Client {
         final var responseHandler = new CompletionHandler<Integer, Void>() {
             @Override
             public void completed(Integer numBytes, Void attachment) {
-                LOGGER.log(Level.INFO, "Response:\n{0}", SocketUtil.byteBufferToString(byteBuffer, numBytes));
+                LOGGER.log(Level.INFO, "Response:\n{0}",
+                           SocketReadUtil.byteBufferToString(byteBuffer, numBytes));
                 try {
-                    final var reader = SocketUtil.byteBufferToReader(byteBuffer, numBytes);
+                    final var reader = SocketReadUtil.byteBufferToReader(byteBuffer, numBytes);
                     verifyEventType(reader);
                     verifyReturnCode(reader);
                     joinWaitingRoom(reader);
