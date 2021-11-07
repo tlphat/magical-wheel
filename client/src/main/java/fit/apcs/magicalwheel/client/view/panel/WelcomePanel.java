@@ -1,14 +1,15 @@
-package fit.apcs.magicalwheel.client.view;
+package fit.apcs.magicalwheel.client.view.panel;
 
-import java.awt.GridBagLayout;
+import java.awt.Color;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.io.Serial;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-import java.awt.Color;
-import java.awt.GridBagConstraints;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -20,6 +21,10 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import fit.apcs.magicalwheel.client.connection.Client;
+import fit.apcs.magicalwheel.client.model.Player;
+import fit.apcs.magicalwheel.client.view.document.JTextFieldLimit;
+import fit.apcs.magicalwheel.client.view.MainFrame;
+import fit.apcs.magicalwheel.client.view.util.ResourceUtil;
 
 public class WelcomePanel extends JPanel {
     
@@ -27,11 +32,14 @@ public class WelcomePanel extends JPanel {
     private static final long serialVersionUID = 6624186548473295189L;
     private static final Logger LOGGER = Logger.getLogger(WelcomePanel.class.getName());
 
+    private final JLabel message;
+    private final MainFrame mainFrame;
     private JButton playButton;
     private JTextField usernameField;
-    private final JLabel message;
 
-    public WelcomePanel() {
+    public WelcomePanel(MainFrame mainFrame) {
+        this.mainFrame = mainFrame;
+
         // for display purpose only (to guarantee that this text always takes 1 line)
         message = new JLabel(" ");
         message.setForeground(Color.WHITE);
@@ -107,7 +115,7 @@ public class WelcomePanel extends JPanel {
         if (isUsernameVerified(username)) {
             LOGGER.log(Level.INFO, "Button clicked");
             final var client = Client.getInstance();
-            client.openConnection(unused -> client.sendUsername(username));
+            client.openConnection(unused -> client.sendUsername(username, this));
         }
     }
 
@@ -120,6 +128,11 @@ public class WelcomePanel extends JPanel {
         return true;
     }
 
+    public void setMessage(String text) {
+        message.setText(text);
+    }
+
+    @SuppressWarnings("MethodMayBeStatic")
     private JLabel centralLabel() {
         final var label = new JLabel();
         label.setText(ResourceUtil.GAME_NAME);
@@ -132,6 +145,10 @@ public class WelcomePanel extends JPanel {
         label.setHorizontalAlignment(SwingConstants.CENTER);
         label.setVerticalAlignment(SwingConstants.CENTER);
         return label;
+    }
+
+    public void joinWaitingRoom(int maxNumPlayers, List<Player> listPlayers) {
+        mainFrame.switchToWaitingRoom(maxNumPlayers, listPlayers);
     }
 
 }

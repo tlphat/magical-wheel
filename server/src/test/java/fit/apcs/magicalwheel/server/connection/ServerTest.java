@@ -12,6 +12,7 @@ import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 class ServerTest {
@@ -30,6 +31,7 @@ class ServerTest {
     }
 
     @Test
+    @Disabled("This test might take some resources")
     void testMultipleConnections() {
         assertDoesNotThrow(() -> {
             final var socketList = IntStream.range(0, 100).mapToObj(i -> {
