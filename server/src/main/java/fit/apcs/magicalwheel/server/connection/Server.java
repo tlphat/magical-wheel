@@ -19,7 +19,7 @@ public final class Server {
     private static final Logger LOGGER = Logger.getLogger(Server.class.getName());
     private static final Server INSTANCE = new Server();
 
-    private static final String OK_MESSAGE = "OK";
+    private static final String OK_MESSAGE = "1\n0\n2\n";
     private static final int SERVER_PORT = 8080;
     private static final long READ_TIMEOUT = 10; // in seconds
 
@@ -34,7 +34,6 @@ public final class Server {
     }
 
     public void run() {
-        // TODO: check if the requirement justify the use of asynchronous server socket channel
         try (final var serverChannel =
                      AsynchronousServerSocketChannel.open().bind(new InetSocketAddress(SERVER_PORT))) {
             LOGGER.log(Level.INFO, "Server waiting for connections");
@@ -51,7 +50,6 @@ public final class Server {
     }
 
     private void waitingForConnections(AsynchronousServerSocketChannel serverChannel) {
-        // TODO: test this method under multiple connections
         serverChannel.accept(null, new CompletionHandler<AsynchronousSocketChannel, Void>() {
             @Override
             public void completed(AsynchronousSocketChannel clientChannel, Void attachment) {
@@ -81,7 +79,7 @@ public final class Server {
                     final var name = SocketUtil.byteBufferToString(byteBuffer, numBytes);
                     final var player = new Player(name, clientChannel);
                     gamePlay.addPlayer(player);
-                    SocketUtil.writeStringToChannel(clientChannel, OK_MESSAGE);
+                    SocketUtil.writeStringToChannel(clientChannel, OK_MESSAGE + name + '\n');
                 } catch (RuntimeException ex) {
                     SocketUtil.closeSocketChannel(clientChannel);
                 }
