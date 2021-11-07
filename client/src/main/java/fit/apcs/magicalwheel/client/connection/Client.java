@@ -77,7 +77,7 @@ public final class Client {
     }
 
     private void waitForJoinGameResponse(WelcomePanel panel) {
-        final var byteBuffer = ByteBuffer.allocate(100);
+        final var byteBuffer = ByteBuffer.allocate(1000);
         final var responseHandler = new JoinGameHandler(byteBuffer, panel, this);
         channel.read(byteBuffer, TIMEOUT, TimeUnit.SECONDS, null, responseHandler);
     }
