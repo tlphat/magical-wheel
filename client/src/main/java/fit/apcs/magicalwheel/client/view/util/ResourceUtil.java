@@ -1,4 +1,4 @@
-package fit.apcs.magicalwheel.client.view;
+package fit.apcs.magicalwheel.client.view.util;
 
 import java.net.URL;
 import java.util.Optional;

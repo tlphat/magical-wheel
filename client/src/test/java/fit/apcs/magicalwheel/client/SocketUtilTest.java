@@ -5,14 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
+import fit.apcs.magicalwheel.client.constant.EventType;
+
 class SocketUtilTest {
 
     @Test
     void convertLinesToMessage() {
-        final var eventType = 1;
-        final var username = "john";
-        final var message = getMessageFromLines(eventType, username);
-        assertEquals("1\njohn\n", message);
+        final var message = getMessageFromLines(EventType.JOIN_ROOM, "john");
+        assertEquals(EventType.JOIN_ROOM.getValue() + "\njohn\n", message);
     }
 
 }
