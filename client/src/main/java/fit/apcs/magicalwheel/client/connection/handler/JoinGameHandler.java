@@ -31,8 +31,7 @@ public class JoinGameHandler implements CompletionHandler<Integer, Void> {
 
     @Override
     public void completed(Integer numBytes, Void attachment) {
-        LOGGER.log(Level.INFO, "Response:\n{0}",
-                   SocketReadUtil.byteBufferToString(byteBuffer, numBytes));
+        LOGGER.log(Level.INFO, "Response:\n{0}", SocketReadUtil.byteBufferToString(byteBuffer, numBytes));
         try {
             final var reader = SocketReadUtil.byteBufferToReader(byteBuffer, numBytes);
             verifyEventType(reader);
@@ -79,6 +78,7 @@ public class JoinGameHandler implements CompletionHandler<Integer, Void> {
     @Override
     public void failed(Throwable ex, Void attachment) {
         LOGGER.log(Level.WARNING, "Cannot get response from server", ex);
+        client.closeConnection();
     }
 
 }
