@@ -33,7 +33,6 @@ public class MainFrame extends JFrame {
 
     public void switchToWaitingRoom(int maxNumPlayers, List<Player> currentPlayers) {
         final var waitingPanel = new WaitingPanel(maxNumPlayers, currentPlayers);
-        // FIXME: change the switch panel strategy
         setContentPane(waitingPanel);
         repaint();
         revalidate();
