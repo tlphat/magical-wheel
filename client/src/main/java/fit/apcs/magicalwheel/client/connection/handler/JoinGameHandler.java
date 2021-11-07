@@ -1,4 +1,4 @@
-package fit.apcs.magicalwheel.client.connection.responsehandler;
+package fit.apcs.magicalwheel.client.connection.handler;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,15 +15,15 @@ import fit.apcs.magicalwheel.lib.constant.EventType;
 import fit.apcs.magicalwheel.lib.constant.StatusCode;
 import fit.apcs.magicalwheel.lib.util.SocketReadUtil;
 
-public class JoinGameResponseHandler implements CompletionHandler<Integer, Void> {
+public class JoinGameHandler implements CompletionHandler<Integer, Void> {
 
-    private static final Logger LOGGER = Logger.getLogger(JoinGameResponseHandler.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(JoinGameHandler.class.getName());
 
     private final ByteBuffer byteBuffer;
     private final WelcomePanel panel;
     private final Client client;
 
-    public JoinGameResponseHandler(ByteBuffer byteBuffer, WelcomePanel panel, Client client) {
+    public JoinGameHandler(ByteBuffer byteBuffer, WelcomePanel panel, Client client) {
         this.byteBuffer = byteBuffer;
         this.panel = panel;
         this.client = client;

@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import fit.apcs.magicalwheel.client.connection.responsehandler.JoinGameResponseHandler;
+import fit.apcs.magicalwheel.client.connection.handler.JoinGameHandler;
 import fit.apcs.magicalwheel.client.view.panel.WelcomePanel;
 import fit.apcs.magicalwheel.lib.constant.EventType;
 import fit.apcs.magicalwheel.lib.util.SocketReadUtil;
@@ -78,7 +78,7 @@ public final class Client {
 
     private void waitForJoinGameResponse(WelcomePanel panel) {
         final var byteBuffer = ByteBuffer.allocate(100);
-        final var responseHandler = new JoinGameResponseHandler(byteBuffer, panel, this);
+        final var responseHandler = new JoinGameHandler(byteBuffer, panel, this);
         channel.read(byteBuffer, TIMEOUT, TimeUnit.SECONDS, null, responseHandler);
     }
 
