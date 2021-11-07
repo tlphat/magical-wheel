@@ -2,3 +2,4 @@ rootProject.name = 'magical-wheel'
 
 include ':server'
 include ':client'
+include ':lib'
