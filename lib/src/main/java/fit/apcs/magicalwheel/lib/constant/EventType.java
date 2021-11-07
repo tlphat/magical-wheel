@@ -1,4 +1,4 @@
-package fit.apcs.magicalwheel.client.constant;
+package fit.apcs.magicalwheel.lib.constant;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -6,6 +6,14 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
+/**
+ * Use to specify the event type of the request/response.
+ * Its <strong>value</strong> should be:
+ * <ul>
+ *     <li>attached at the beginning of any request/response from the sender</li>
+ *     <li>checked by the receiver upon receiving the message</li>
+ * </ul>
+ */
 public enum EventType {
 
     JOIN_ROOM("1"),
