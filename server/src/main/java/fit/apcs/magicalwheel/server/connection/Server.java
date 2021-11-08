@@ -61,17 +61,13 @@ public final class Server {
             public void completed(AsynchronousSocketChannel clientChannel, Void attachment) {
                 LOGGER.log(Level.INFO, "New connection accepted");
                 readUsername(clientChannel);
-                if (!gamePlay.canStart()) {
-                    serverChannel.accept(null, this);
-                }
+                serverChannel.accept(null, this);
             }
 
             @Override
             public void failed(Throwable ex, Void attachment) {
                 LOGGER.log(Level.WARNING, "Error in accepting connection", ex);
-                if (!gamePlay.canStart()) {
-                    serverChannel.accept(null, this);
-                }
+                serverChannel.accept(null, this);
             }
         });
     }
