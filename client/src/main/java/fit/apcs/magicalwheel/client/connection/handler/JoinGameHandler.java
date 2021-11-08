@@ -23,10 +23,10 @@ public class JoinGameHandler implements CompletionHandler<Integer, Void> {
     private final WelcomePanel panel;
     private final Client client;
 
-    public JoinGameHandler(ByteBuffer byteBuffer, WelcomePanel panel, Client client) {
+    public JoinGameHandler(ByteBuffer byteBuffer, WelcomePanel panel) {
         this.byteBuffer = byteBuffer;
         this.panel = panel;
-        this.client = client;
+        client = Client.getInstance();
     }
 
     @Override
