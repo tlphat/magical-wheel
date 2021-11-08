@@ -1,6 +1,7 @@
 package fit.apcs.magicalwheel.server.connection.handler;
 
 import static fit.apcs.magicalwheel.lib.constant.EventType.JOIN_ROOM;
+import static fit.apcs.magicalwheel.lib.constant.EventType.NEW_PLAYER;
 import static fit.apcs.magicalwheel.lib.constant.EventType.fromString;
 import static fit.apcs.magicalwheel.lib.constant.StatusCode.FULL_CONNECTION;
 import static fit.apcs.magicalwheel.lib.constant.StatusCode.OK;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -46,13 +48,8 @@ public class JoinGameHandler implements CompletionHandler<Integer, Void> {
             final var reader = SocketReadUtil.byteBufferToReader(byteBuffer, numBytes);
             validateEventType(reader);
             final var username = reader.readLine().trim();
-            final var player = new Player(username, clientChannel);
-            final var players = gamePlay.addPlayer(player);
-            final var responseBody =
-                    Stream.concat(Stream.of(OK.getCode(), GamePlay.MAX_NUM_PLAYERS, players.size()),
-                                  players.stream().map(Player::getUsername)).toArray(Object[]::new);
-            writeStringToChannel(clientChannel, getMessageFromLines(JOIN_ROOM, responseBody));
-            // TODO: announce new player has joined room
+            final var players = addNewPlayer(username);
+            announceNewPlayer(players, username);
         } catch (UnsupportedOperationException ex) { // TODO: simplify and generalize this logic
             writeStringToChannel(clientChannel,
                                  getMessageFromLines(JOIN_ROOM, FULL_CONNECTION.getCode()), false);
@@ -78,6 +75,24 @@ public class JoinGameHandler implements CompletionHandler<Integer, Void> {
                        new Object[]{ JOIN_ROOM, type});
             throw new WrongMessageFormatException("Wrong event type");
         }
+    }
+
+    private List<Player> addNewPlayer(String username) {
+        final var player = new Player(username, clientChannel);
+        final var players = gamePlay.addPlayer(player);
+        final var responseBody =
+                Stream.concat(Stream.of(OK.getCode(), GamePlay.MAX_NUM_PLAYERS, players.size()),
+                              players.stream().map(Player::getUsername)).toArray(Object[]::new);
+        writeStringToChannel(clientChannel, getMessageFromLines(JOIN_ROOM, responseBody));
+        return players;
+    }
+
+    private static void announceNewPlayer(List<Player> players, String username) {
+        players.forEach(player -> {
+            if (!player.getUsername().equals(username)) {
+                writeStringToChannel(player.getChannel(), getMessageFromLines(NEW_PLAYER, username));
+            }
+        });
     }
 
     @Override
