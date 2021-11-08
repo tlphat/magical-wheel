@@ -13,8 +13,9 @@ public enum StatusCode {
     OK(0, "OK"),
     USERNAME_EXISTED(1, "Username has already existed"),
     USERNAME_INVALID(2, "Username is invalid"),
-    SERVER_ERROR(3, "Internal server error"),
-    WRONG_FORMAT(4, "The message is in wrong format");
+    FULL_CONNECTION(3, "Server has received enough connection"),
+    SERVER_ERROR(4, "Internal server error"),
+    WRONG_FORMAT(5, "The message is in wrong format");
 
     private static final Logger LOGGER = Logger.getLogger(StatusCode.class.getName());
     private final int code;
