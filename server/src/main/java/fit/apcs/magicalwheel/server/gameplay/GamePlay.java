@@ -8,7 +8,7 @@ import fit.apcs.magicalwheel.server.entity.Question;
 
 public class GamePlay {
 
-    private static final int MAX_NUM_PLAYERS = 2;
+    public static final int MAX_NUM_PLAYERS = 2;
 
     private final List<Player> players = new ArrayList<>();
     private final Question question = GameLoader.getInstance().getRandomQuestion();
