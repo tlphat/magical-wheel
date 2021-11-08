@@ -40,7 +40,7 @@ public class PlayerPanel extends JPanel {
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.weightx = 1;
         add(orderLabel, gbc);
-        gbc.weightx = 10;
+        gbc.weightx = 8;
         add(usernameLabel, gbc);
         gbc.weightx = 1;
         add(scoreLabel, gbc);
@@ -56,5 +56,9 @@ public class PlayerPanel extends JPanel {
 
     public void updateScore() {
         scoreLabel.setText(String.valueOf(player.getPoint()));
+    }
+
+    public void setMainPlayer() {
+        usernameLabel.setText(player.getUsername() + " (You)");
     }
 }

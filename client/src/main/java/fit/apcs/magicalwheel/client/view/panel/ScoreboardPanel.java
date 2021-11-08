@@ -2,9 +2,11 @@ package fit.apcs.magicalwheel.client.view.panel;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,18 +19,22 @@ import fit.apcs.magicalwheel.client.model.Player;
 
 public class ScoreboardPanel extends JPanel {
 
-    List<PlayerPanel> playerPanels;
+    private List<PlayerPanel> playerPanels;
+    private final int mainPlayerOrder;
 
-    public ScoreboardPanel(List<Player> players) {
-        final var mainPanel = new JPanel();
+    public ScoreboardPanel(List<Player> players, int mainPlayerOrder) {
+        this.mainPlayerOrder = mainPlayerOrder;
         final var layout = new FlowLayout();
         initPlayerPanels(players);
         layout.setHgap(30);
         layout.setVgap(30);
-        mainPanel.setOpaque(false);
-        mainPanel.setLayout(layout);
-        mainPanel.setBorder(BorderFactory.createLineBorder(Color.YELLOW));
-        mainPanel.add(contentPanel());
+        setOpaque(false);
+        setLayout(layout);
+
+        //setPreferredSize(new Dimension(SCOREBOARD_WIDTH, SCOREBOARD_HEIGHT));
+        setBorder(BorderFactory.createLineBorder(Color.YELLOW));
+        setMainPlayer();
+        add(contentPanel());
     }
 
     private void initPlayerPanels(List<Player> players) {
@@ -51,7 +57,7 @@ public class ScoreboardPanel extends JPanel {
     }
 
     private JPanel playerList() {
-        final var playerList = new JPanel();
+        final var playerList = new JPanel(new GridLayout(playerPanels.size(), 1));
         playerList.setOpaque(false);
         for (PlayerPanel playerPanel: playerPanels) {
             playerList.add(playerPanel);
@@ -62,7 +68,13 @@ public class ScoreboardPanel extends JPanel {
     private JPanel headerPanel() {
         final var headerPanel = new JPanel();
         final var title = new JLabel("SCOREBOARD");
+        title.setForeground(Color.YELLOW);
+        headerPanel.setOpaque(false);
         headerPanel.add(title);
         return headerPanel;
+    }
+
+    private void setMainPlayer() {
+        playerPanels.get(mainPlayerOrder - 1).setMainPlayer();
     }
 }
