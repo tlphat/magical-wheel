@@ -18,7 +18,7 @@ public class GamePlay {
         return players.size() == MAX_NUM_PLAYERS;
     }
 
-    public synchronized void addPlayer(Player player) {
+    public synchronized List<Player> addPlayer(Player player) {
         if (canStart()) {
             throw new UnsupportedOperationException("There is enough players got connected");
         }
@@ -27,6 +27,7 @@ public class GamePlay {
                     String.format("Player with username %s is already existed", player.getName()));
         }
         players.add(player);
+        return players;
     }
 
     public void start() {
