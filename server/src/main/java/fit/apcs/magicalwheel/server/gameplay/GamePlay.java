@@ -41,12 +41,14 @@ public class GamePlay {
     }
 
     private void sendStartGameSignal() {
+        // FIXME: fix the writing pending exception here
         final var body = Stream.concat(Stream.of(question.getKeyword().length(),
                                                  question.getDescription(),
                                                  players.size()),
                                        players.stream().map(Player::getUsername)).toArray(Object[]::new);
         players.forEach(player -> writeStringToChannel(player.getChannel(),
                                                        getMessageFromLines(START_GAME, body)));
+        Thread.onSpinWait();
         // TODO: send start turn signal to first player AFTER the start game signal has arrived
     }
 

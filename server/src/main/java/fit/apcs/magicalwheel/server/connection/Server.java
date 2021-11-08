@@ -67,7 +67,6 @@ public final class Server {
             @Override
             public void failed(Throwable ex, Void attachment) {
                 LOGGER.log(Level.WARNING, "Error in accepting connection", ex);
-                serverChannel.accept(null, this);
             }
         });
     }
