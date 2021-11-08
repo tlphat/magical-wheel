@@ -5,6 +5,7 @@ import java.util.List;
 
 import fit.apcs.magicalwheel.server.entity.Player;
 import fit.apcs.magicalwheel.server.entity.Question;
+import fit.apcs.magicalwheel.server.exception.DuplicatedResourceException;
 
 public class GamePlay {
 
@@ -22,7 +23,7 @@ public class GamePlay {
             throw new UnsupportedOperationException("There is enough players got connected");
         }
         if (players.contains(player)) {
-            throw new IllegalArgumentException(
+            throw new DuplicatedResourceException(
                     String.format("Player with username %s is already existed", player.getName()));
         }
         players.add(player);
