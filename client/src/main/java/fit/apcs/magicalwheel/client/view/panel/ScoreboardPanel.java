@@ -57,8 +57,11 @@ public class ScoreboardPanel extends JPanel {
     }
 
     private JPanel playerList() {
-        final var playerList = new JPanel(new GridLayout(playerPanels.size(), 1));
+        final var playerList = new JPanel();
+        final var layout = new GridLayout(playerPanels.size(), 1);
+        layout.setVgap(10);
         playerList.setOpaque(false);
+        playerList.setLayout(layout);
         for (PlayerPanel playerPanel: playerPanels) {
             playerList.add(playerPanel);
         }

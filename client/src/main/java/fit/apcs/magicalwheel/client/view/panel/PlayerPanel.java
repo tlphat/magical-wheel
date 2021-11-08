@@ -3,6 +3,8 @@ package fit.apcs.magicalwheel.client.view.panel;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+
 import java.awt.Insets;
 
 import javax.swing.JLabel;
@@ -11,7 +13,7 @@ import javax.swing.JPanel;
 import fit.apcs.magicalwheel.client.model.Player;
 
 public class PlayerPanel extends JPanel {
-    
+    // /
     private final Player player;
     private final JLabel orderLabel;
     private final JLabel usernameLabel;
@@ -33,17 +35,19 @@ public class PlayerPanel extends JPanel {
     }
 
     private void initLayout() {
-        setLayout(new GridBagLayout());
+        final var layout = new GridLayout(1, 3);
+        setLayout(layout);
         setOpaque(false);
-        final var gbc = new GridBagConstraints();
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.weightx = 1;
-        add(orderLabel, gbc);
-        gbc.weightx = 8;
-        add(usernameLabel, gbc);
-        gbc.weightx = 1;
-        add(scoreLabel, gbc);
+        // final var gbc = new GridBagConstraints();
+        // gbc.anchor = GridBagConstraints.LINE_START;
+        // gbc.insets = new Insets(5, 5, 5, 5);
+        // gbc.gridx = 0;
+        scoreLabel.setHorizontalAlignment(JLabel.RIGHT);
+        add(orderLabel);
+        //gbc.gridx = 1;
+        add(usernameLabel);
+        //gbc.gridx = 2;
+        add(scoreLabel);
     }
 
     public void switchToPlayerTurn() {
