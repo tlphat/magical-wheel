@@ -2,6 +2,7 @@ package fit.apcs.magicalwheel.server.connection;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -11,6 +12,7 @@ import java.nio.channels.CompletionHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import fit.apcs.magicalwheel.lib.constant.EventType;
 import fit.apcs.magicalwheel.lib.util.SocketReadUtil;
 import fit.apcs.magicalwheel.server.entity.Player;
 import fit.apcs.magicalwheel.server.gameplay.GamePlay;
@@ -19,8 +21,6 @@ public final class Server {
 
     private static final Logger LOGGER = Logger.getLogger(Server.class.getName());
     private static final Server INSTANCE = new Server();
-
-    private static final String OK_MESSAGE = "1\n0\n2\n";
     private static final int SERVER_PORT = 8080;
 
     private final GamePlay gamePlay = new GamePlay();
@@ -31,6 +31,14 @@ public final class Server {
 
     public static Server getInstance() {
         return INSTANCE;
+    }
+
+    private static void closeClientChannel(AsynchronousSocketChannel channel) {
+        try {
+            channel.close();
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, "Error in closing connection", ex);
+        }
     }
 
     public void run() {
@@ -72,25 +80,39 @@ public final class Server {
 
     private void readName(AsynchronousSocketChannel clientChannel) {
         final var byteBuffer = ByteBuffer.allocate(200);
-        clientChannel.read(byteBuffer, SocketReadUtil.TIMEOUT_IN_SECONDS, SECONDS, null, new CompletionHandler<Integer, Void>() {
+        final var completionHandler = new CompletionHandler<Integer, Void>() {
             @Override
             public void completed(Integer numBytes, Void attachment) {
                 try {
-                    final var name = SocketUtil.byteBufferToString(byteBuffer, numBytes);
+                    final var reader = SocketReadUtil.byteBufferToReader(byteBuffer, numBytes);
+                    validateEventType(reader);
+                    final var name = reader.readLine().trim();
                     final var player = new Player(name, clientChannel);
                     gamePlay.addPlayer(player);
-                    SocketUtil.writeStringToChannel(clientChannel, OK_MESSAGE + name + '\n');
-                } catch (RuntimeException ex) {
-                    SocketUtil.closeSocketChannel(clientChannel);
+                    // TODO: return success join game response
+                } catch (Exception ex) {
+                    // TODO: return error message to client
+                    closeClientChannel(clientChannel);
+                }
+            }
+
+            private void validateEventType(BufferedReader reader) throws IOException {
+                final var type = EventType.fromString(reader.readLine());
+                if (type != EventType.JOIN_ROOM) {
+                    LOGGER.log(Level.WARNING, "Expect response of type {0}, got {1}",
+                               new Object[]{EventType.JOIN_ROOM, type});
+                    // TODO: return error message to client
+                    throw new IllegalArgumentException("Wrong event type");
                 }
             }
 
             @Override
             public void failed(Throwable exc, Void attachment) {
                 LOGGER.log(Level.WARNING, "Timeout waiting for name", exc);
-                SocketUtil.closeSocketChannel(clientChannel);
+                closeClientChannel(clientChannel);
             }
-        });
+        };
+        clientChannel.read(byteBuffer, SocketReadUtil.TIMEOUT_IN_SECONDS, SECONDS, null, completionHandler);
     }
 
 }
