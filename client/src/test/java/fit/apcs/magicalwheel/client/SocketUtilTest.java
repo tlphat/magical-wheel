@@ -1,6 +1,6 @@
 package fit.apcs.magicalwheel.client;
 
-import static fit.apcs.magicalwheel.lib.util.SocketReadUtil.getMessageFromLines;
+import static fit.apcs.magicalwheel.lib.util.SocketWriteUtil.getMessageFromLines;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;

@@ -5,26 +5,16 @@ import java.io.StringReader;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
-import fit.apcs.magicalwheel.lib.constant.EventType;
-
 // TODO: add java doc for this utility class
 public final class SocketReadUtil {
 
     /**
      * Timeout in seconds for read operation of socket channel
      */
-    public static final int TIMEOUT = 5;
+    public static final int TIMEOUT_IN_SECONDS = 5;
 
     private SocketReadUtil() {
 
-    }
-
-    public static String getMessageFromLines(EventType type, Object... lines) {
-        final var strBuilder = new StringBuilder().append(type.getValue() + '\n');
-        for (var line: lines) {
-            strBuilder.append(line.toString() + '\n');
-        }
-        return strBuilder.toString();
     }
 
     public static String byteBufferToString(ByteBuffer byteBuffer, Integer numBytes) {

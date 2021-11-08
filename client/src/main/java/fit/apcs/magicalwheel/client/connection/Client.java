@@ -72,7 +72,7 @@ public final class Client {
     }
 
     public void sendUsername(String username, WelcomePanel panel) {
-        final var message = SocketReadUtil.getMessageFromLines(EventType.JOIN_ROOM, username.trim());
+        final var message = SocketWriteUtil.getMessageFromLines(EventType.JOIN_ROOM, username.trim());
         SocketWriteUtil.writeStringToChannel(channel, message);
         waitForJoinGameResponse(panel);
     }
@@ -80,13 +80,13 @@ public final class Client {
     private void waitForJoinGameResponse(WelcomePanel panel) {
         final var byteBuffer = ByteBuffer.allocate(1000);
         final var responseHandler = new JoinGameHandler(byteBuffer, panel);
-        channel.read(byteBuffer, SocketReadUtil.TIMEOUT, TimeUnit.SECONDS, null, responseHandler);
+        channel.read(byteBuffer, SocketReadUtil.TIMEOUT_IN_SECONDS, TimeUnit.SECONDS, null, responseHandler);
     }
 
     public void waitForStartGameSignal(WaitingPanel panel) {
         final var byteBuffer = ByteBuffer.allocate(2000);
         final var responseHandler = new StartGameHandler(byteBuffer, panel, channel);
-        channel.read(byteBuffer, SocketReadUtil.TIMEOUT, TimeUnit.SECONDS, null, responseHandler);
+        channel.read(byteBuffer, SocketReadUtil.TIMEOUT_IN_SECONDS, TimeUnit.SECONDS, null, responseHandler);
     }
 
 }

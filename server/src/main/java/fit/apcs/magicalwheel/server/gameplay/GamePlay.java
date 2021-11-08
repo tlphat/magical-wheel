@@ -5,10 +5,11 @@ import java.util.List;
 
 import fit.apcs.magicalwheel.server.entity.Player;
 import fit.apcs.magicalwheel.server.entity.Question;
+import fit.apcs.magicalwheel.server.exception.DuplicatedResourceException;
 
 public class GamePlay {
 
-    private static final int MAX_NUM_PLAYERS = 2;
+    public static final int MAX_NUM_PLAYERS = 2;
 
     private final List<Player> players = new ArrayList<>();
     private final Question question = GameLoader.getInstance().getRandomQuestion();
@@ -17,15 +18,16 @@ public class GamePlay {
         return players.size() == MAX_NUM_PLAYERS;
     }
 
-    public synchronized void addPlayer(Player player) {
+    public synchronized List<Player> addPlayer(Player player) {
         if (canStart()) {
             throw new UnsupportedOperationException("There is enough players got connected");
         }
         if (players.contains(player)) {
-            throw new IllegalArgumentException(
-                    String.format("Player with username %s is already existed", player.getName()));
+            throw new DuplicatedResourceException(
+                    String.format("Player with username %s is already existed", player.getUsername()));
         }
         players.add(player);
+        return players;
     }
 
     public void start() {

@@ -11,17 +11,15 @@ import java.nio.channels.CompletionHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import fit.apcs.magicalwheel.server.entity.Player;
+import fit.apcs.magicalwheel.lib.util.SocketReadUtil;
+import fit.apcs.magicalwheel.server.connection.handler.JoinGameHandler;
 import fit.apcs.magicalwheel.server.gameplay.GamePlay;
 
 public final class Server {
 
     private static final Logger LOGGER = Logger.getLogger(Server.class.getName());
     private static final Server INSTANCE = new Server();
-
-    private static final String OK_MESSAGE = "1\n0\n2\n";
     private static final int SERVER_PORT = 8080;
-    private static final long READ_TIMEOUT = 10; // in seconds
 
     private final GamePlay gamePlay = new GamePlay();
 
@@ -31,6 +29,14 @@ public final class Server {
 
     public static Server getInstance() {
         return INSTANCE;
+    }
+
+    public static void closeClientChannel(AsynchronousSocketChannel channel) {
+        try {
+            channel.close();
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, "Error in closing connection", ex);
+        }
     }
 
     public void run() {
@@ -54,7 +60,7 @@ public final class Server {
             @Override
             public void completed(AsynchronousSocketChannel clientChannel, Void attachment) {
                 LOGGER.log(Level.INFO, "New connection accepted");
-                readName(clientChannel);
+                readUsername(clientChannel);
                 if (!gamePlay.canStart()) {
                     serverChannel.accept(null, this);
                 }
@@ -70,27 +76,10 @@ public final class Server {
         });
     }
 
-    private void readName(AsynchronousSocketChannel clientChannel) {
+    private void readUsername(AsynchronousSocketChannel clientChannel) {
         final var byteBuffer = ByteBuffer.allocate(200);
-        clientChannel.read(byteBuffer, READ_TIMEOUT, SECONDS, null, new CompletionHandler<Integer, Void>() {
-            @Override
-            public void completed(Integer numBytes, Void attachment) {
-                try {
-                    final var name = SocketUtil.byteBufferToString(byteBuffer, numBytes);
-                    final var player = new Player(name, clientChannel);
-                    gamePlay.addPlayer(player);
-                    SocketUtil.writeStringToChannel(clientChannel, OK_MESSAGE + name + '\n');
-                } catch (RuntimeException ex) {
-                    SocketUtil.closeSocketChannel(clientChannel);
-                }
-            }
-
-            @Override
-            public void failed(Throwable exc, Void attachment) {
-                LOGGER.log(Level.WARNING, "Timeout waiting for name", exc);
-                SocketUtil.closeSocketChannel(clientChannel);
-            }
-        });
+        final var completionHandler = new JoinGameHandler(byteBuffer, clientChannel, gamePlay);
+        clientChannel.read(byteBuffer, SocketReadUtil.TIMEOUT_IN_SECONDS, SECONDS, null, completionHandler);
     }
 
 }
