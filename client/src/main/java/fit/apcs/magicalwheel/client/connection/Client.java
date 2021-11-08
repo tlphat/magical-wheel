@@ -11,6 +11,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import fit.apcs.magicalwheel.client.connection.handler.JoinGameHandler;
+import fit.apcs.magicalwheel.client.connection.handler.StartGameHandler;
+import fit.apcs.magicalwheel.client.view.panel.WaitingPanel;
 import fit.apcs.magicalwheel.client.view.panel.WelcomePanel;
 import fit.apcs.magicalwheel.lib.constant.EventType;
 import fit.apcs.magicalwheel.lib.util.SocketReadUtil;
@@ -23,7 +25,6 @@ public final class Client {
 
     private static final String SERVER_HOST = "127.0.0.1";
     private static final int SERVER_PORT = 8080;
-    private static final int TIMEOUT = 10;  // in seconds
 
     private AsynchronousSocketChannel channel;
 
@@ -77,9 +78,15 @@ public final class Client {
     }
 
     private void waitForJoinGameResponse(WelcomePanel panel) {
-        final var byteBuffer = ByteBuffer.allocate(100);
-        final var responseHandler = new JoinGameHandler(byteBuffer, panel, this);
-        channel.read(byteBuffer, TIMEOUT, TimeUnit.SECONDS, null, responseHandler);
+        final var byteBuffer = ByteBuffer.allocate(1000);
+        final var responseHandler = new JoinGameHandler(byteBuffer, panel);
+        channel.read(byteBuffer, SocketReadUtil.TIMEOUT, TimeUnit.SECONDS, null, responseHandler);
+    }
+
+    public void waitForStartGameSignal(WaitingPanel panel) {
+        final var byteBuffer = ByteBuffer.allocate(2000);
+        final var responseHandler = new StartGameHandler(byteBuffer, panel, channel);
+        channel.read(byteBuffer, SocketReadUtil.TIMEOUT, TimeUnit.SECONDS, null, responseHandler);
     }
 
 }

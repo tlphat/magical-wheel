@@ -15,7 +15,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import fit.apcs.magicalwheel.client.connection.Client;
 import fit.apcs.magicalwheel.client.model.Player;
+import fit.apcs.magicalwheel.client.view.MainFrame;
 
 public class WaitingPanel extends JPanel {
 
@@ -23,6 +25,7 @@ public class WaitingPanel extends JPanel {
     private static final long serialVersionUID = -9181686575965110043L;
     private static final int PLAY_ELEMENT_HEIGHT = 30;
 
+    private final MainFrame mainFrame;
     private final transient Player mainPlayer;
     private final transient List<Player> waitingPlayers;
     private final int maxNumPlayers;
@@ -30,7 +33,8 @@ public class WaitingPanel extends JPanel {
     private JPanel waitingList;
     private int currentNumber;
 
-    public WaitingPanel(int maxNumPlayers, List<Player> currentPlayers) {
+    public WaitingPanel(int maxNumPlayers, List<Player> currentPlayers, MainFrame mainFrame) {
+        this.mainFrame = mainFrame;
         this.maxNumPlayers = maxNumPlayers;
 
         waitingPlayers = currentPlayers;
@@ -41,6 +45,8 @@ public class WaitingPanel extends JPanel {
         setOpaque(false);
         setLayout(new GridBagLayout());
         add(mainPanel());
+
+        Client.getInstance().waitForStartGameSignal(this);
     }
 
     private JPanel mainPanel() {
@@ -100,6 +106,7 @@ public class WaitingPanel extends JPanel {
             usernameLabel.setForeground(Color.WHITE);
         }
         waitingList.add(playerPanel);
+        mainFrame.refresh();
     }
 
     public void addNewPlayerToRoom(String username) {
@@ -136,6 +143,16 @@ public class WaitingPanel extends JPanel {
         roomTitle.setForeground(Color.YELLOW);
         roomTitle.setHorizontalTextPosition(SwingConstants.CENTER);
         return roomTitle;
+    }
+
+    public void startGame(int keywordLength, String hint, List<Player> players) {
+        for (var order = 1; order <= players.size(); ++order) {
+            if (players.get(order - 1).equals(mainPlayer)) { // player have order ith is player[i - 1]
+                mainFrame.switchToGamePanel(keywordLength, hint, players, order);
+                return;
+            }
+        }
+        throw new IllegalArgumentException("Cannot find main player in the list");
     }
 
 }

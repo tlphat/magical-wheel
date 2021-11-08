@@ -32,10 +32,17 @@ public class MainFrame extends JFrame {
     }
 
     public void switchToWaitingRoom(int maxNumPlayers, List<Player> currentPlayers) {
-        final var waitingPanel = new WaitingPanel(maxNumPlayers, currentPlayers);
+        final var waitingPanel = new WaitingPanel(maxNumPlayers, currentPlayers, this);
         setContentPane(waitingPanel);
+    }
+
+    public void refresh() {
         repaint();
         revalidate();
+    }
+
+    public void switchToGamePanel(int keywordLength, String hint, List<Player> players, int curPlayerOrder) {
+        // TODO: create new game panel
     }
 
     private void setOnExitEvent() {
