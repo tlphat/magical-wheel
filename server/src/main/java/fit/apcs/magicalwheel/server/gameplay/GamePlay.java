@@ -24,7 +24,7 @@ public class GamePlay {
         }
         if (players.contains(player)) {
             throw new DuplicatedResourceException(
-                    String.format("Player with username %s is already existed", player.getName()));
+                    String.format("Player with username %s is already existed", player.getUsername()));
         }
         players.add(player);
         return players;

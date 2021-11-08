@@ -73,7 +73,7 @@ public final class Server {
             @Override
             public void completed(AsynchronousSocketChannel clientChannel, Void attachment) {
                 LOGGER.log(Level.INFO, "New connection accepted");
-                readName(clientChannel);
+                readUsername(clientChannel);
                 if (!gamePlay.canStart()) {
                     serverChannel.accept(null, this);
                 }
@@ -89,7 +89,7 @@ public final class Server {
         });
     }
 
-    private void readName(AsynchronousSocketChannel clientChannel) {
+    private void readUsername(AsynchronousSocketChannel clientChannel) {
         final var byteBuffer = ByteBuffer.allocate(200);
         // TODO: separate completion handler into a new class
         final var completionHandler = new CompletionHandler<Integer, Void>() {
@@ -98,15 +98,16 @@ public final class Server {
                 try {
                     final var reader = SocketReadUtil.byteBufferToReader(byteBuffer, numBytes);
                     validateEventType(reader);
-                    final var name = reader.readLine().trim();
-                    final var player = new Player(name, clientChannel);
+                    final var username = reader.readLine().trim();
+                    final var player = new Player(username, clientChannel);
                     final var players = gamePlay.addPlayer(player);
                     final var response =
                             getMessageFromLines(JOIN_ROOM,
                                                 OK.getCode(),
                                                 GamePlay.MAX_NUM_PLAYERS,
                                                 players.size(),
-                                                players.stream().map(Player::getName).toArray(String[]::new));
+                                                players.stream().map(Player::getUsername)
+                                                       .toArray(String[]::new));
                     writeStringToChannel(clientChannel, response);
                 } catch (UnsupportedOperationException ex) { // TODO: simplify and generalize this logic
                     writeStringToChannel(clientChannel,

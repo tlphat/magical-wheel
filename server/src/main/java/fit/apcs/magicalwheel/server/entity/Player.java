@@ -4,18 +4,18 @@ import java.nio.channels.AsynchronousSocketChannel;
 
 public class Player {
 
-    private final String name;
+    private final String username;
     private final AsynchronousSocketChannel socketChannel;
     private int point = 0;
 
-    public Player(String name, AsynchronousSocketChannel socketChannel) {
-        this.name = name; // TODO: validate player name
+    public Player(String username, AsynchronousSocketChannel socketChannel) {
+        this.username = username; // TODO: validate player name
         this.socketChannel = socketChannel;
     }
 
     @Override
     public int hashCode() {
-        return name.hashCode();
+        return username.hashCode();
     }
 
     @Override
@@ -26,16 +26,16 @@ public class Player {
         if (obj == this) {
             return true;
         }
-        return obj instanceof Player && ((Player) obj).name.equals(name);
+        return obj instanceof Player && ((Player) obj).username.equals(username);
     }
 
     @Override
     public String toString() {
-        return String.format("{%s, %d}", name, point);
+        return String.format("{%s, %d}", username, point);
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
     public int getPoint() {
