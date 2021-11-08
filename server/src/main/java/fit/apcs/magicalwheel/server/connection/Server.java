@@ -21,6 +21,7 @@ import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 import fit.apcs.magicalwheel.lib.util.SocketReadUtil;
 import fit.apcs.magicalwheel.server.entity.Player;
@@ -101,14 +102,10 @@ public final class Server {
                     final var username = reader.readLine().trim();
                     final var player = new Player(username, clientChannel);
                     final var players = gamePlay.addPlayer(player);
-                    final var response =
-                            getMessageFromLines(JOIN_ROOM,
-                                                OK.getCode(),
-                                                GamePlay.MAX_NUM_PLAYERS,
-                                                players.size(),
-                                                players.stream().map(Player::getUsername)
-                                                       .toArray(String[]::new));
-                    writeStringToChannel(clientChannel, response);
+                    final var responseBody =
+                            Stream.concat(Stream.of(OK.getCode(), GamePlay.MAX_NUM_PLAYERS, players.size()),
+                                          players.stream().map(Player::getUsername)).toArray(Object[]::new);
+                    writeStringToChannel(clientChannel, getMessageFromLines(JOIN_ROOM, responseBody));
                 } catch (UnsupportedOperationException ex) { // TODO: simplify and generalize this logic
                     writeStringToChannel(clientChannel,
                                          getMessageFromLines(JOIN_ROOM, FULL_CONNECTION.getCode()), false);
