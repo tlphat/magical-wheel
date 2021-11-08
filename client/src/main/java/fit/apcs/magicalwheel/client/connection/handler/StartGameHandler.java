@@ -32,8 +32,7 @@ public class StartGameHandler implements CompletionHandler<Integer, Void> {
 
     @Override
     public void completed(Integer numBytes, Void attachment) {
-        LOGGER.log(Level.INFO, "Response:\n{0}",
-                   SocketReadUtil.byteBufferToString(byteBuffer, numBytes));
+        LOGGER.log(Level.INFO, "Response:\n{0}", SocketReadUtil.byteBufferToString(byteBuffer, numBytes));
         try {
             final var reader = SocketReadUtil.byteBufferToReader(byteBuffer, numBytes);
             final var type = EventType.fromString(reader.readLine());
