@@ -72,7 +72,7 @@ public final class Client {
     }
 
     public void sendUsername(String username, WelcomePanel panel) {
-        final var message = SocketReadUtil.getMessageFromLines(EventType.JOIN_ROOM, username.trim());
+        final var message = SocketWriteUtil.getMessageFromLines(EventType.JOIN_ROOM, username.trim());
         SocketWriteUtil.writeStringToChannel(channel, message);
         waitForJoinGameResponse(panel);
     }
