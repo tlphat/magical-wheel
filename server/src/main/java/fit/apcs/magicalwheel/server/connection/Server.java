@@ -11,6 +11,7 @@ import java.nio.channels.CompletionHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import fit.apcs.magicalwheel.lib.util.SocketReadUtil;
 import fit.apcs.magicalwheel.server.entity.Player;
 import fit.apcs.magicalwheel.server.gameplay.GamePlay;
 
@@ -21,7 +22,6 @@ public final class Server {
 
     private static final String OK_MESSAGE = "1\n0\n2\n";
     private static final int SERVER_PORT = 8080;
-    private static final long READ_TIMEOUT = 10; // in seconds
 
     private final GamePlay gamePlay = new GamePlay();
 
@@ -72,7 +72,7 @@ public final class Server {
 
     private void readName(AsynchronousSocketChannel clientChannel) {
         final var byteBuffer = ByteBuffer.allocate(200);
-        clientChannel.read(byteBuffer, READ_TIMEOUT, SECONDS, null, new CompletionHandler<Integer, Void>() {
+        clientChannel.read(byteBuffer, SocketReadUtil.TIMEOUT_IN_SECONDS, SECONDS, null, new CompletionHandler<Integer, Void>() {
             @Override
             public void completed(Integer numBytes, Void attachment) {
                 try {

@@ -45,7 +45,7 @@ public class StartGameHandler implements CompletionHandler<Integer, Void> {
                 case NEW_PLAYER:
                     handleNewPlayerSignal(reader, panel); // intentionally fall through
                 default: // continue waiting for signal
-                    channel.read(byteBuffer, SocketReadUtil.TIMEOUT, TimeUnit.SECONDS, null, this);
+                    channel.read(byteBuffer, SocketReadUtil.TIMEOUT_IN_SECONDS, TimeUnit.SECONDS, null, this);
             }
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Error in parsing response", ex);
@@ -67,13 +67,13 @@ public class StartGameHandler implements CompletionHandler<Integer, Void> {
     private void handleNewPlayerSignal(BufferedReader reader, WaitingPanel panel) throws IOException {
         final var newPlayerUsername = reader.readLine().trim();
         panel.addNewPlayerToRoom(newPlayerUsername);
-        channel.read(byteBuffer, SocketReadUtil.TIMEOUT, TimeUnit.SECONDS, null, this);
+        channel.read(byteBuffer, SocketReadUtil.TIMEOUT_IN_SECONDS, TimeUnit.SECONDS, null, this);
     }
 
     @Override
     public void failed(Throwable ex, Void attachment) {
         // If timeout, we continue to listen to start game signal
-        channel.read(byteBuffer, SocketReadUtil.TIMEOUT, TimeUnit.SECONDS, null, this);
+        channel.read(byteBuffer, SocketReadUtil.TIMEOUT_IN_SECONDS, TimeUnit.SECONDS, null, this);
     }
 
 }

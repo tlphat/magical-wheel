@@ -13,7 +13,7 @@ public final class SocketReadUtil {
     /**
      * Timeout in seconds for read operation of socket channel
      */
-    public static final int TIMEOUT = 5;
+    public static final int TIMEOUT_IN_SECONDS = 5;
 
     private SocketReadUtil() {
 

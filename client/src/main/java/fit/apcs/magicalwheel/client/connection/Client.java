@@ -80,13 +80,13 @@ public final class Client {
     private void waitForJoinGameResponse(WelcomePanel panel) {
         final var byteBuffer = ByteBuffer.allocate(1000);
         final var responseHandler = new JoinGameHandler(byteBuffer, panel);
-        channel.read(byteBuffer, SocketReadUtil.TIMEOUT, TimeUnit.SECONDS, null, responseHandler);
+        channel.read(byteBuffer, SocketReadUtil.TIMEOUT_IN_SECONDS, TimeUnit.SECONDS, null, responseHandler);
     }
 
     public void waitForStartGameSignal(WaitingPanel panel) {
         final var byteBuffer = ByteBuffer.allocate(2000);
         final var responseHandler = new StartGameHandler(byteBuffer, panel, channel);
-        channel.read(byteBuffer, SocketReadUtil.TIMEOUT, TimeUnit.SECONDS, null, responseHandler);
+        channel.read(byteBuffer, SocketReadUtil.TIMEOUT_IN_SECONDS, TimeUnit.SECONDS, null, responseHandler);
     }
 
 }
