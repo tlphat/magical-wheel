@@ -34,6 +34,7 @@ public class MainFrame extends JFrame {
     public void switchToWaitingRoom(int maxNumPlayers, List<Player> currentPlayers) {
         final var waitingPanel = new WaitingPanel(maxNumPlayers, currentPlayers, this);
         setContentPane(waitingPanel);
+        refresh();
     }
 
     public void refresh() {
