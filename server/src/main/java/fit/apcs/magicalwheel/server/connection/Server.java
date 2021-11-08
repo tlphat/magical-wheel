@@ -1,5 +1,15 @@
 package fit.apcs.magicalwheel.server.connection;
 
+import static fit.apcs.magicalwheel.lib.constant.EventType.JOIN_ROOM;
+import static fit.apcs.magicalwheel.lib.constant.EventType.fromString;
+import static fit.apcs.magicalwheel.lib.constant.StatusCode.FULL_CONNECTION;
+import static fit.apcs.magicalwheel.lib.constant.StatusCode.OK;
+import static fit.apcs.magicalwheel.lib.constant.StatusCode.SERVER_ERROR;
+import static fit.apcs.magicalwheel.lib.constant.StatusCode.USERNAME_EXISTED;
+import static fit.apcs.magicalwheel.lib.constant.StatusCode.USERNAME_INVALID;
+import static fit.apcs.magicalwheel.lib.constant.StatusCode.WRONG_FORMAT;
+import static fit.apcs.magicalwheel.lib.util.SocketWriteUtil.getMessageFromLines;
+import static fit.apcs.magicalwheel.lib.util.SocketWriteUtil.writeStringToChannel;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 import java.io.BufferedReader;
@@ -12,9 +22,10 @@ import java.nio.channels.CompletionHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import fit.apcs.magicalwheel.lib.constant.EventType;
 import fit.apcs.magicalwheel.lib.util.SocketReadUtil;
 import fit.apcs.magicalwheel.server.entity.Player;
+import fit.apcs.magicalwheel.server.exception.DuplicatedResourceException;
+import fit.apcs.magicalwheel.server.exception.WrongMessageFormatException;
 import fit.apcs.magicalwheel.server.gameplay.GamePlay;
 
 public final class Server {
@@ -80,6 +91,7 @@ public final class Server {
 
     private void readName(AsynchronousSocketChannel clientChannel) {
         final var byteBuffer = ByteBuffer.allocate(200);
+        // TODO: separate completion handler into a new class
         final var completionHandler = new CompletionHandler<Integer, Void>() {
             @Override
             public void completed(Integer numBytes, Void attachment) {
@@ -88,21 +100,38 @@ public final class Server {
                     validateEventType(reader);
                     final var name = reader.readLine().trim();
                     final var player = new Player(name, clientChannel);
-                    gamePlay.addPlayer(player);
-                    // TODO: return success join game response
-                } catch (Exception ex) {
-                    // TODO: return error message to client
-                    closeClientChannel(clientChannel);
+                    final var players = gamePlay.addPlayer(player);
+                    final var response =
+                            getMessageFromLines(JOIN_ROOM,
+                                                OK.getCode(),
+                                                GamePlay.MAX_NUM_PLAYERS,
+                                                players.size(),
+                                                players.stream().map(Player::getName).toArray(String[]::new));
+                    writeStringToChannel(clientChannel, response);
+                } catch (UnsupportedOperationException ex) { // TODO: simplify and generalize this logic
+                    writeStringToChannel(clientChannel,
+                                         getMessageFromLines(JOIN_ROOM, FULL_CONNECTION.getCode()), false);
+                } catch (DuplicatedResourceException ex) {
+                    writeStringToChannel(clientChannel,
+                                         getMessageFromLines(JOIN_ROOM, USERNAME_EXISTED.getCode()), false);
+                } catch (WrongMessageFormatException ex) {
+                    writeStringToChannel(clientChannel,
+                                         getMessageFromLines(JOIN_ROOM, WRONG_FORMAT.getCode()), false);
+                } catch (IllegalArgumentException ex) {
+                    writeStringToChannel(clientChannel,
+                                         getMessageFromLines(JOIN_ROOM, USERNAME_INVALID.getCode()), false);
+                } catch (IOException | RuntimeException ex) {
+                    writeStringToChannel(clientChannel,
+                                         getMessageFromLines(JOIN_ROOM, SERVER_ERROR.getCode()), false);
                 }
             }
 
             private void validateEventType(BufferedReader reader) throws IOException {
-                final var type = EventType.fromString(reader.readLine());
-                if (type != EventType.JOIN_ROOM) {
+                final var type = fromString(reader.readLine());
+                if (type != JOIN_ROOM) {
                     LOGGER.log(Level.WARNING, "Expect response of type {0}, got {1}",
-                               new Object[]{EventType.JOIN_ROOM, type});
-                    // TODO: return error message to client
-                    throw new IllegalArgumentException("Wrong event type");
+                               new Object[]{ JOIN_ROOM, type});
+                    throw new WrongMessageFormatException("Wrong event type");
                 }
             }
 
