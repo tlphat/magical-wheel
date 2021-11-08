@@ -15,11 +15,11 @@ import javax.swing.JPanel;
 
 import fit.apcs.magicalwheel.client.model.Player;
 
-public class PlayersPanel extends JPanel {
+public class ScoreboardPanel extends JPanel {
 
     List<PlayerPanel> playerPanels;
 
-    public PlayersPanel(List<Player> players) {
+    public ScoreboardPanel(List<Player> players) {
         final var mainPanel = new JPanel();
         final var layout = new FlowLayout();
         initPlayerPanels(players);
@@ -44,7 +44,6 @@ public class PlayersPanel extends JPanel {
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.anchor = GridBagConstraints.NORTH;
         gbc.insets = new Insets(20,0,0,0);
-
         contentPanel.setOpaque(false);
         contentPanel.add(headerPanel(), gbc);
         contentPanel.add(playerList(), gbc);
@@ -54,7 +53,9 @@ public class PlayersPanel extends JPanel {
     private JPanel playerList() {
         final var playerList = new JPanel();
         playerList.setOpaque(false);
-
+        for (PlayerPanel playerPanel: playerPanels) {
+            playerList.add(playerPanel);
+        }
         return playerList;
     }
 
