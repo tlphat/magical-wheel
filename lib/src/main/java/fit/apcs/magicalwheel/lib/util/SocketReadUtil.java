@@ -10,6 +10,11 @@ import fit.apcs.magicalwheel.lib.constant.EventType;
 // TODO: add java doc for this utility class
 public final class SocketReadUtil {
 
+    /**
+     * Timeout in seconds for read operation of socket channel
+     */
+    public static final int TIMEOUT = 5;
+
     private SocketReadUtil() {
 
     }

@@ -20,8 +20,6 @@ import fit.apcs.magicalwheel.lib.util.SocketWriteUtil;
 
 public final class Client {
 
-    public static final int TIMEOUT = 10;  // in seconds
-
     private static final Logger LOGGER = Logger.getLogger(Client.class.getName());
     private static final Client INSTANCE = new Client();
 
@@ -82,13 +80,13 @@ public final class Client {
     private void waitForJoinGameResponse(WelcomePanel panel) {
         final var byteBuffer = ByteBuffer.allocate(1000);
         final var responseHandler = new JoinGameHandler(byteBuffer, panel);
-        channel.read(byteBuffer, TIMEOUT, TimeUnit.SECONDS, null, responseHandler);
+        channel.read(byteBuffer, SocketReadUtil.TIMEOUT, TimeUnit.SECONDS, null, responseHandler);
     }
 
     public void waitForStartGameSignal(WaitingPanel panel) {
         final var byteBuffer = ByteBuffer.allocate(2000);
         final var responseHandler = new StartGameHandler(byteBuffer, panel, channel);
-        channel.read(byteBuffer, TIMEOUT, TimeUnit.SECONDS, null, responseHandler);
+        channel.read(byteBuffer, SocketReadUtil.TIMEOUT, TimeUnit.SECONDS, null, responseHandler);
     }
 
 }
