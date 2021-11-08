@@ -106,9 +106,7 @@ public class WaitingPanel extends JPanel {
             usernameLabel.setForeground(Color.WHITE);
         }
         waitingList.add(playerPanel);
-        // TODO: combine these two statements into the same method in MainFrame
-        mainFrame.repaint();
-        mainFrame.revalidate();
+        mainFrame.refresh();
     }
 
     public void addNewPlayerToRoom(String username) {
