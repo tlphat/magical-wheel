@@ -41,6 +41,10 @@ public class MainFrame extends JFrame {
         revalidate();
     }
 
+    public void switchToGamePanel(int keywordLength, String hint, List<Player> players, int curPlayerOrder) {
+        // TODO: create new game panel
+    }
+
     private void setOnExitEvent() {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {

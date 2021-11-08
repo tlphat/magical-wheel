@@ -146,7 +146,13 @@ public class WaitingPanel extends JPanel {
     }
 
     public void startGame(int keywordLength, String hint, List<Player> players) {
-        // TODO: Implement this method. It shoud delegate to MainFrame to navigate to GamePanel
+        for (var order = 1; order <= players.size(); ++order) {
+            if (players.get(order - 1).equals(mainPlayer)) { // player have order ith is player[i - 1]
+                mainFrame.switchToGamePanel(keywordLength, hint, players, order);
+                return;
+            }
+        }
+        throw new IllegalArgumentException("Cannot find main player in the list");
     }
 
 }

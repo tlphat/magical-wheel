@@ -24,4 +24,20 @@ public class Player {
         return point;
     }
 
+    @Override
+    public int hashCode() {
+        return username.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        return obj instanceof Player && ((Player) obj).username.equals(username);
+    }
+
 }
