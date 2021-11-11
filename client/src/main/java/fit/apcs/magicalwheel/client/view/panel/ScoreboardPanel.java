@@ -1,13 +1,12 @@
 package fit.apcs.magicalwheel.client.view.panel;
 
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +17,9 @@ import javax.swing.JPanel;
 import fit.apcs.magicalwheel.client.model.Player;
 
 public class ScoreboardPanel extends JPanel {
+
+    @Serial
+    private static final long serialVersionUID = -3608692024568041019L;
 
     private List<PlayerPanel> playerPanels;
     private final int mainPlayerOrder;
@@ -66,6 +68,7 @@ public class ScoreboardPanel extends JPanel {
         return playerList;
     }
 
+    @SuppressWarnings("MethodMayBeStatic")
     private JPanel headerPanel() {
         final var headerPanel = new JPanel();
         final var title = new JLabel("SCOREBOARD");
@@ -78,4 +81,5 @@ public class ScoreboardPanel extends JPanel {
     private void setMainPlayer() {
         playerPanels.get(mainPlayerOrder - 1).setMainPlayer();
     }
+
 }
