@@ -30,8 +30,6 @@ public class ScoreboardPanel extends JPanel {
         layout.setVgap(30);
         setOpaque(false);
         setLayout(layout);
-
-        //setPreferredSize(new Dimension(SCOREBOARD_WIDTH, SCOREBOARD_HEIGHT));
         setBorder(BorderFactory.createLineBorder(Color.YELLOW));
         setMainPlayer();
         add(contentPanel());
@@ -49,7 +47,7 @@ public class ScoreboardPanel extends JPanel {
         final var gbc = new GridBagConstraints();
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.anchor = GridBagConstraints.NORTH;
-        gbc.insets = new Insets(20,0,0,0);
+        gbc.insets = new Insets(10,0,0,0);
         contentPanel.setOpaque(false);
         contentPanel.add(headerPanel(), gbc);
         contentPanel.add(playerList(), gbc);
