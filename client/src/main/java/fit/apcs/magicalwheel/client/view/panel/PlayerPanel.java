@@ -1,29 +1,30 @@
 package fit.apcs.magicalwheel.client.view.panel;
 
 import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-
-import java.awt.Insets;
+import java.io.Serial;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import fit.apcs.magicalwheel.client.model.Player;
 
 public class PlayerPanel extends JPanel {
-    // /
-    private final Player player;
+
+    @Serial
+    private static final long serialVersionUID = -3210186870376241901L;
+
+    private final transient Player player;
     private final JLabel orderLabel;
     private final JLabel usernameLabel;
     private final JLabel scoreLabel;
 
     public PlayerPanel(Player player) {
         this.player = player;
-        this.orderLabel = new JLabel(String.valueOf(player.getOrder()));
-        this.usernameLabel = new JLabel(player.getUsername());
-        this.scoreLabel = new JLabel(String.valueOf(player.getPoint()));
+        orderLabel = new JLabel(String.valueOf(player.getOrder()));
+        usernameLabel = new JLabel(player.getUsername());
+        scoreLabel = new JLabel(String.valueOf(player.getPoint()));
         setLabelsColor();
         initLayout();
     }
@@ -38,15 +39,9 @@ public class PlayerPanel extends JPanel {
         final var layout = new GridLayout(1, 3);
         setLayout(layout);
         setOpaque(false);
-        // final var gbc = new GridBagConstraints();
-        // gbc.anchor = GridBagConstraints.LINE_START;
-        // gbc.insets = new Insets(5, 5, 5, 5);
-        // gbc.gridx = 0;
-        scoreLabel.setHorizontalAlignment(JLabel.RIGHT);
+        scoreLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         add(orderLabel);
-        //gbc.gridx = 1;
         add(usernameLabel);
-        //gbc.gridx = 2;
         add(scoreLabel);
     }
 
@@ -65,4 +60,5 @@ public class PlayerPanel extends JPanel {
     public void setMainPlayer() {
         usernameLabel.setText(player.getUsername() + " (You)");
     }
+
 }
