@@ -1,28 +1,34 @@
 package fit.apcs.magicalwheel.client.view.panel;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.GridLayout;
-import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.io.Serial;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
 
+import javax.annotation.Nullable;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.w3c.dom.events.Event;
-
 public class SubmitPanel extends JPanel {
+
+    @Serial
+    private static final long serialVersionUID = -8293038273986925047L;
+    private static final Logger LOGGER = Logger.getLogger(SubmitPanel.class.getName());
 
     private final List<JButton> characterButtons;
     private final JTextField keywordField;
     private final JButton submitButton;
+
+    @Nullable
     private JButton curChoice;
     
     public SubmitPanel() {
@@ -31,7 +37,7 @@ public class SubmitPanel extends JPanel {
         submitButton = new JButton();
         curChoice = null;
 
-        for (char c = 'A'; c <= 'Z'; c++) {
+        for (var c = 'A'; c <= 'Z'; c++) {
             characterButtons.add(characterButton(c));
         }
 
@@ -41,12 +47,6 @@ public class SubmitPanel extends JPanel {
         add(keywordPanel());
     }
 
-    private JLabel messageLabel() {
-        final var message = new JLabel("Please choose a character");
-        message.setForeground(Color.WHITE);
-        return message;
-    }
-
     private JButton characterButton(char c) {
         final var button = new JButton();
         button.setText(Character.toString(c));
@@ -54,7 +54,7 @@ public class SubmitPanel extends JPanel {
         button.setForeground(Color.WHITE);
         button.setBackground(Color.BLACK);
         button.setBorder(BorderFactory.createLineBorder(Color.WHITE));
-        button.addActionListener(event -> onCharButtonClickListener(event));
+        button.addActionListener(this::onCharButtonClickListener);
         button.setFocusPainted(false);
         return button;
     }
@@ -105,11 +105,11 @@ public class SubmitPanel extends JPanel {
         if (curChoice == null) {
             return;
         }
-        String character = curChoice.getText();
-        String keyword = keywordField.getText();
+        final String character = curChoice.getText();
+        final String keyword = keywordField.getText();
         //TODO: call a finish turn function
-        System.out.println(character);
-        System.out.println(keyword);
+        LOGGER.info(character);
+        LOGGER.info(keyword);
     }
 
     private JPanel characterPanel() {
@@ -132,4 +132,5 @@ public class SubmitPanel extends JPanel {
         keywordField.setEnabled(false);
         submitButton.setEnabled(false);
     }
+
 }
