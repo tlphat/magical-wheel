@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.Serial;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -11,6 +12,7 @@ import javax.swing.JFrame;
 
 import fit.apcs.magicalwheel.client.connection.Client;
 import fit.apcs.magicalwheel.client.model.Player;
+import fit.apcs.magicalwheel.client.view.panel.GamePanel;
 import fit.apcs.magicalwheel.client.view.panel.WaitingPanel;
 import fit.apcs.magicalwheel.client.view.panel.WelcomePanel;
 import fit.apcs.magicalwheel.client.view.util.ResourceUtil;
@@ -26,7 +28,15 @@ public class MainFrame extends JFrame {
         setExtendedState(MAXIMIZED_BOTH);
         setResizable(false);
         setIconImage(new ImageIcon(ResourceUtil.getImageURL("wheel.png")).getImage());
-        addWelcomePanel();
+        //addWelcomePanel();
+        List<Player> players = new ArrayList<>();
+        players.add(new Player(1, "dungplt"));
+        players.add(new Player(2, "tlp"));
+        players.add(new Player(3, "huhu"));
+        players.add(new Player(4, "thao"));
+        players.add(new Player(5, "ok"));
+        players.add(new Player(6, "ok"));
+        switchToGamePanel(10, "This is a very very very very very very very very very very very very long hint.", players, 4);
         setBackground(Color.BLACK);
         setVisible(true);
     }
@@ -43,7 +53,8 @@ public class MainFrame extends JFrame {
     }
 
     public void switchToGamePanel(int keywordLength, String hint, List<Player> players, int curPlayerOrder) {
-        // TODO: create new game panel
+        final var gamePanel = new GamePanel(keywordLength, hint, players, curPlayerOrder);
+        setContentPane(gamePanel);
     }
 
     private void setOnExitEvent() {
