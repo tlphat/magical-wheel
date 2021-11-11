@@ -86,7 +86,7 @@ public final class Client {
     public void waitForStartGameSignal(WaitingPanel panel) {
         final var byteBuffer = ByteBuffer.allocate(2000);
         final var responseHandler = new StartGameHandler(byteBuffer, panel, channel);
-        channel.read(byteBuffer, SocketReadUtil.TIMEOUT_IN_SECONDS, TimeUnit.SECONDS, null, responseHandler);
+        channel.read(byteBuffer, null, responseHandler);
     }
 
 }

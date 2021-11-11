@@ -6,7 +6,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -73,14 +72,12 @@ public class StartGameHandler implements CompletionHandler<Integer, Void> {
 
     private void clearAndReadBuffer(ByteBuffer byteBuffer) {
         byteBuffer.clear();
-        channel.read(byteBuffer, SocketReadUtil.TIMEOUT_IN_SECONDS, TimeUnit.SECONDS, null, this);
+        channel.read(byteBuffer, null, this);
     }
 
-    // TODO: check if it really reread on the channel
     @Override
     public void failed(Throwable ex, Void attachment) {
-        // If timeout, we continue to listen to start game signal
-        clearAndReadBuffer(byteBuffer);
+        LOGGER.log(Level.WARNING, "Cannot get response from server", ex);
     }
 
 }
