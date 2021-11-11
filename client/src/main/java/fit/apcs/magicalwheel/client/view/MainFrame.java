@@ -32,20 +32,20 @@ public class MainFrame extends JFrame {
         setVisible(true);
     }
 
-    public void switchToWaitingRoom(int maxNumPlayers, List<Player> currentPlayers) {
+    public synchronized void switchToWaitingRoom(int maxNumPlayers, List<Player> currentPlayers) {
         final var waitingPanel = new WaitingPanel(maxNumPlayers, currentPlayers, this);
         setContentPane(waitingPanel);
         refresh();
     }
 
-    public void switchToGamePanel(int keywordLength, String hint,
+    public synchronized void switchToGamePanel(int keywordLength, String hint,
                                                List<Player> players, int curPlayerOrder) {
         final var gamePanel = new GamePanel(keywordLength, hint, players, curPlayerOrder);
         setContentPane(gamePanel);
         refresh();
     }
 
-    public void refresh() {
+    public synchronized void refresh() {
         repaint();
         revalidate();
     }
