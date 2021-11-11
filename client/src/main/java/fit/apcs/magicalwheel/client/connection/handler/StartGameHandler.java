@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.SwingUtilities;
+
 import fit.apcs.magicalwheel.client.model.Player;
 import fit.apcs.magicalwheel.client.view.panel.WaitingPanel;
 import fit.apcs.magicalwheel.lib.constant.EventType;
@@ -61,12 +63,12 @@ public class StartGameHandler implements CompletionHandler<Integer, Void> {
             final var username = reader.readLine().trim();
             players.add(new Player(order, username));
         }
-        panel.startGame(keywordLength, hint, players);
+        SwingUtilities.invokeLater(() -> panel.startGame(keywordLength, hint, players));
     }
 
     private void handleNewPlayerSignal(BufferedReader reader, WaitingPanel panel) throws IOException {
         final var newPlayerUsername = reader.readLine().trim();
-        panel.addNewPlayerToRoom(newPlayerUsername);
+        SwingUtilities.invokeLater(() -> panel.addNewPlayerToRoom(newPlayerUsername));
         clearAndReadBuffer(byteBuffer);
     }
 
