@@ -1,11 +1,8 @@
 package fit.apcs.magicalwheel.client.view.panel;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.FlowLayout;
 
 import java.io.Serial;
@@ -42,19 +39,6 @@ public class PlayerPanel extends JPanel {
     }
 
     private void initLayout() {
-        // final var layout = new GridBagLayout();
-        // final var gbc = new GridBagConstraints();
-        // setPreferredSize(new Dimension(150, 15));
-        // setLayout(layout);
-        // setOpaque(false);
-        // scoreLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        // gbc.gridx = 1;
-        // add(orderLabel, gbc);
-        // gbc.gridx = 15;
-        // add(usernameLabel, gbc);
-        // gbc.gridx = 1;
-        // add(scoreLabel, gbc);
-
         setLayout(new FlowLayout());
         setOpaque(false);
         orderLabel.setHorizontalAlignment(SwingConstants.LEFT);
