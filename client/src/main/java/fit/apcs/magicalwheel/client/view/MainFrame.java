@@ -52,7 +52,6 @@ public class MainFrame extends JFrame {
     }
 
     public void switchToGamePanel(int keywordLength, String hint, List<Player> players, int curPlayerOrder) {
-        // TODO: create new game panel
         final var gamePanel = new GamePanel(keywordLength, hint, players, curPlayerOrder);
         setContentPane(gamePanel);
     }
