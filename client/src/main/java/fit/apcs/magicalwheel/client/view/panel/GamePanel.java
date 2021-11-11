@@ -2,30 +2,24 @@ package fit.apcs.magicalwheel.client.view.panel;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
-
+import java.io.Serial;
 import java.util.List;
 
 import javax.swing.BorderFactory;
-import javax.swing.JApplet;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.text.FlowView;
 
 import fit.apcs.magicalwheel.client.model.Player;
 
 public class GamePanel extends JPanel {
 
-    private final int keywordLength;
-    private final String hint;
-    private final List<Player> players;
-    private final int mainPlayerOrder;
+    @Serial
+    private static final long serialVersionUID = -13480572595592699L;
+
     private final ScoreboardPanel scoreboardPanel;
     private final GameInfoPanel gameInfoPanel;
     private final SubmitPanel submitPanel;
@@ -33,15 +27,12 @@ public class GamePanel extends JPanel {
     private final JLabel turnLabel;
 
     public GamePanel(int keywordLength, String hint, List<Player> players, int mainPlayerOrder) {
-        this.scoreboardPanel = new ScoreboardPanel(players, mainPlayerOrder);
-        this.gameInfoPanel = new GameInfoPanel(keywordLength, hint);
-        this.submitPanel = new SubmitPanel();
-        this.countdownLabel = new JLabel();
-        this.turnLabel = new JLabel();
-        this.keywordLength = keywordLength;
-        this.hint = hint;
-        this.players = players;
-        this.mainPlayerOrder = mainPlayerOrder;
+        scoreboardPanel = new ScoreboardPanel(players, mainPlayerOrder);
+        gameInfoPanel = new GameInfoPanel(keywordLength, hint);
+        submitPanel = new SubmitPanel();
+        countdownLabel = new JLabel();
+        turnLabel = new JLabel();
+
         initLayout();
         setTime("00:00");
         setTurn(1);
@@ -98,7 +89,8 @@ public class GamePanel extends JPanel {
         countdownLabel.setText(time);
     }
 
-    private void setTurn(int i) {
-        turnLabel.setText("Turn " + String.valueOf(i));
+    private void setTurn(int turn) {
+        turnLabel.setText("Turn " + turn);
     }
+
 }
