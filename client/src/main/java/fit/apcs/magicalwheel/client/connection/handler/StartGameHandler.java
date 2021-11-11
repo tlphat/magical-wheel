@@ -34,22 +34,23 @@ public class StartGameHandler implements CompletionHandler<Integer, Void> {
         LOGGER.log(Level.INFO, "Response:\n{0}", SocketReadUtil.byteBufferToString(byteBuffer, numBytes));
         try {
             final var reader = SocketReadUtil.byteBufferToReader(byteBuffer, numBytes);
-            final var type = EventType.fromString(reader.readLine());
-            if (type == null) {
-                throw new IOException("Cannot parse the event type");
-            }
+            final var type = validateEventType(reader);
             switch (type) {
-                case START_GAME:
-                    handleStartGameSignal(reader, panel);
-                    return;
-                case NEW_PLAYER:
-                    handleNewPlayerSignal(reader, panel); // intentionally fall through
-                default: // continue waiting for signal
-                    channel.read(byteBuffer, SocketReadUtil.TIMEOUT_IN_SECONDS, TimeUnit.SECONDS, null, this);
+                case START_GAME -> handleStartGameSignal(reader, panel);
+                case NEW_PLAYER -> handleNewPlayerSignal(reader, panel);
+                default -> clearAndReadBuffer(byteBuffer);
             }
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Error in parsing response", ex);
         }
+    }
+
+    private static EventType validateEventType(BufferedReader reader) throws IOException {
+        final var type = EventType.fromString(reader.readLine());
+        if (type == null) {
+            throw new IOException("Cannot parse the event type");
+        }
+        return type;
     }
 
     private static void handleStartGameSignal(BufferedReader reader, WaitingPanel panel) throws IOException {
@@ -67,13 +68,19 @@ public class StartGameHandler implements CompletionHandler<Integer, Void> {
     private void handleNewPlayerSignal(BufferedReader reader, WaitingPanel panel) throws IOException {
         final var newPlayerUsername = reader.readLine().trim();
         panel.addNewPlayerToRoom(newPlayerUsername);
+        clearAndReadBuffer(byteBuffer);
+    }
+
+    private void clearAndReadBuffer(ByteBuffer byteBuffer) {
+        byteBuffer.clear();
         channel.read(byteBuffer, SocketReadUtil.TIMEOUT_IN_SECONDS, TimeUnit.SECONDS, null, this);
     }
 
+    // TODO: check if it really reread on the channel
     @Override
     public void failed(Throwable ex, Void attachment) {
         // If timeout, we continue to listen to start game signal
-        channel.read(byteBuffer, SocketReadUtil.TIMEOUT_IN_SECONDS, TimeUnit.SECONDS, null, this);
+        clearAndReadBuffer(byteBuffer);
     }
 
 }
