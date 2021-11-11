@@ -48,7 +48,9 @@ public class GamePlay {
                                        players.stream().map(Player::getUsername)).toArray(Object[]::new);
         players.forEach(player -> writeStringToChannel(player.getChannel(),
                                                        getMessageFromLines(START_GAME, body)));
-        Thread.onSpinWait();
+        while (true) { // FIXME: Should remove when implementing the game logic
+
+        }
         // TODO: send start turn signal to first player AFTER the start game signal has arrived
     }
 
