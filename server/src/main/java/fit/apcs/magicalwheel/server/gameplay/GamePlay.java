@@ -41,7 +41,6 @@ public class GamePlay {
     }
 
     private void sendStartGameSignal() {
-        // FIXME: fix the writing pending exception here
         final var body = Stream.concat(Stream.of(question.getKeyword().length(),
                                                  question.getDescription(),
                                                  players.size()),

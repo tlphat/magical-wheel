@@ -82,7 +82,6 @@ public class SubmitPanel extends JPanel {
         final var panel = new JPanel(new GridBagLayout());
         final var gbc = new GridBagConstraints();
         final var label = new JLabel("Keyword guess (optional): ");
-        // FIXME: fix the display error for this keyword field
         keywordField.setColumns(10);
         submitButton.setText("Submit");
         submitButton.addActionListener(event -> onSubmitButtonListener());
