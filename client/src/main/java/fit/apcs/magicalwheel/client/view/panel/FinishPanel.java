@@ -6,11 +6,12 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-
+import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -33,19 +34,40 @@ public class FinishPanel extends JPanel {
     }
 
     private void initLayout() {
+        final var gbc = new GridBagConstraints();
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.insets = new Insets(10, 0, 0 ,0);
+        setLayout(new GridBagLayout());
+        setOpaque(false);
+        add(resultPanel(), gbc);
+        add(returnButton(), gbc);
+    }
+
+    private JPanel resultPanel() {
+        final var panel = new JPanel();
         final var layout = new FlowLayout();
         layout.setHgap(30);
         layout.setVgap(30);
-        setOpaque(false);
-        setLayout(layout);
-        setBorder(BorderFactory.createLineBorder(Color.YELLOW));
-        add(contentPanel());
+        panel.setOpaque(false);
+        panel.setLayout(layout);
+        panel.setBorder(BorderFactory.createLineBorder(Color.YELLOW));
+        panel.add(contentPanel());
+        return panel;
+    }
+
+    private JButton returnButton() {
+        final var button = new JButton("Return");
+        //TODO: switch to welcome panel
+        //button.addActionListener(e -> );
+        return button;
     }
 
     private JPanel contentPanel() {
         final var panel = new JPanel(new GridBagLayout());
         final var gbc = new GridBagConstraints();
         gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.anchor = GridBagConstraints.NORTH;
+        gbc.insets = new Insets(20, 0, 0, 0);
         panel.setOpaque(false);
         panel.add(title(), gbc);
         panel.add(gameResult(), gbc);
@@ -66,10 +88,12 @@ public class FinishPanel extends JPanel {
     }
 
     private JPanel gameResult() {
-        final var panel = new JPanel();
+        final var panel = new JPanel(new GridBagLayout());
+        final var gbc = new GridBagConstraints();
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
         panel.setOpaque(false);
-        panel.add(textPanel("Winner: ", winner));
-        panel.add(textPanel("Keyword: ", keyword));
+        panel.add(textPanel("Winner: ", winner), gbc);
+        panel.add(textPanel("Keyword: ", keyword), gbc);
         return panel;
     }
 
@@ -86,7 +110,7 @@ public class FinishPanel extends JPanel {
     }
 
     private JLabel title() {
-        final var label = new JLabel("END GAME");
+        final var label = new JLabel("GAME OVER");
         label.setForeground(Color.WHITE);
         return label;
     }

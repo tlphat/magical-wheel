@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 
 import fit.apcs.magicalwheel.client.connection.Client;
 import fit.apcs.magicalwheel.client.model.Player;
+import fit.apcs.magicalwheel.client.view.panel.FinishPanel;
 import fit.apcs.magicalwheel.client.view.panel.GamePanel;
 import fit.apcs.magicalwheel.client.view.panel.WaitingPanel;
 import fit.apcs.magicalwheel.client.view.panel.WelcomePanel;
@@ -36,9 +37,16 @@ public class MainFrame extends JFrame {
         players.add(new Player(4, "thao"));
         players.add(new Player(5, "ok"));
         players.add(new Player(6, "ok"));
-        switchToGamePanel(10, "This is a very very very very very very very very very very very very long hint.", players, 4);
+        //switchToGamePanel(10, "This is a very very very very very very very very very very very very long hint.", players, 4);
+        switchToFinishPanel("dungplt", "keywordne", players);
         setBackground(Color.BLACK);
         setVisible(true);
+    }
+
+    private void switchToFinishPanel(String winner, String keyword, List<Player> players) {
+        final var finishPanel = new FinishPanel(winner, keyword, players);
+        setContentPane(finishPanel);
+        refresh();
     }
 
     public void switchToWaitingRoom(int maxNumPlayers, List<Player> currentPlayers) {

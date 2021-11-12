@@ -22,7 +22,7 @@ public class PlayerPanel extends JPanel {
 
     public PlayerPanel(Player player) {
         this.player = player;
-        orderLabel = new JLabel(String.valueOf(player.getOrder()));
+        orderLabel = new JLabel(String.valueOf(player.getOrder()) + ".");
         usernameLabel = new JLabel(player.getUsername());
         scoreLabel = new JLabel(String.valueOf(player.getPoint()));
         setLabelsColor();
