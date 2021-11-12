@@ -20,7 +20,7 @@ Build modules
 Launch the server
 
 ```bash
-java -jar ./server/build/libs/server.jar
+python ./server/server.py
 ```
 
 Launch the client
