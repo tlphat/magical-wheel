@@ -1,12 +1,12 @@
 package fit.apcs.magicalwheel.client.view.panel;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +19,9 @@ import fit.apcs.magicalwheel.client.model.Player;
 
 public class FinishPanel extends JPanel {
 
+    @Serial
+    private static final long serialVersionUID = -5635875785851439983L;
+
     private final String winner;
     private final String keyword;
     private final List<PlayerPanel> playerPanels;
@@ -26,7 +29,7 @@ public class FinishPanel extends JPanel {
     public FinishPanel(String winner, String keyword, List<Player> players) {
         this.winner = winner;
         this.keyword = keyword;
-        this.playerPanels = new ArrayList<>();
+        playerPanels = new ArrayList<>();
         for (Player player: players) {
             playerPanels.add(new PlayerPanel(player));
         }
@@ -55,6 +58,7 @@ public class FinishPanel extends JPanel {
         return panel;
     }
 
+    @SuppressWarnings("MethodMayBeStatic")
     private JButton returnButton() {
         final var button = new JButton("Return");
         //TODO: switch to welcome panel
@@ -97,6 +101,7 @@ public class FinishPanel extends JPanel {
         return panel;
     }
 
+    @SuppressWarnings("MethodMayBeStatic")
     private JPanel textPanel(String labelName, String value) {
         final var panel = new JPanel();
         final var label = new JLabel(labelName);
@@ -109,9 +114,11 @@ public class FinishPanel extends JPanel {
         return panel;
     }
 
+    @SuppressWarnings("MethodMayBeStatic")
     private JLabel title() {
         final var label = new JLabel("GAME OVER");
         label.setForeground(Color.WHITE);
         return label;
     }
+
 }
