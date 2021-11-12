@@ -12,7 +12,7 @@ class NetworkManager:
         return len(self.accepted_connections) == NUM_PLAYER and connection_id not in self.accepted_connections
 
     def is_open_for_connection(self):
-        return not self.game.started() and len(self.connections) < MAX_PENDING_CONNECTION and len(self.accepted_connections) < NUM_PLAYER
+        return self.game.state == GameState.WAITING and len(self.connections) < MAX_PENDING_CONNECTION and len(self.accepted_connections) < NUM_PLAYER
 
     def add_new_connection(self, channel):
         if not self.is_open_for_connection():
@@ -48,9 +48,9 @@ class NetworkManager:
             self.send_to(connection_id, content)
 
     def send_to(self, connection_id, content):
-        conn = self.connections[connection_id]
         if not connection_id in self.connections:
             print("Missing connection to: " + str(connection_id))
             return
 
+        conn = self.connections[connection_id]
         conn.send(content.encode())

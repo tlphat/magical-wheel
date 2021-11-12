@@ -12,10 +12,19 @@ PRIVATE_RESPONSE = 'private'
 PUBLIC_RESPONSE = 'public'
 
 EventType = {
-        'JOIN_GAME': 1
+        'JOIN_GAME': 1,
+        'START_GAME': 3,
+        'START_TURN': 5,
+        'END_GAME': 6,
         }
 StatusCode = {
         'SUCCESS': 0,
         'USERNAME_EXISTED': 1,
         'USERNAME_INVALID': 2,
         }
+
+class GameState(Enum):
+    WAITING = 1,
+    PRE_START = 2,
+    START = 3,
+    END = 4

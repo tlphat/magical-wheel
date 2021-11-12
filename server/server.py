@@ -51,5 +51,6 @@ def run():
 
         start_new_thread(threaded_client, (conn, addr, game, connection_id))
 
-        
+    print("huhuhuhuhuhuh")
+
 run()

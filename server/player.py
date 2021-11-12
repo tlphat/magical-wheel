@@ -6,4 +6,11 @@ class Player:
         self.username = username
         self.connection_id = connection_id
         self.score = 0
-        self.turn = TURN_PER_PLAYER
+        self.remaining_turn = TURN_PER_PLAYER
+        self.eliminate = False
+
+    def eliminated(self):
+        return self.eliminate or self.remaining_turn <= 0
+
+    def take_turn(self):
+        self.remaining_turn -= 1
