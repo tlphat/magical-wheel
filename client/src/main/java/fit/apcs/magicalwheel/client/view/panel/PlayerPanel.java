@@ -1,7 +1,10 @@
 package fit.apcs.magicalwheel.client.view.panel;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.FlowLayout;
+
 import java.io.Serial;
 
 import javax.swing.JLabel;
@@ -36,13 +39,21 @@ public class PlayerPanel extends JPanel {
     }
 
     private void initLayout() {
-        final var layout = new GridLayout(1, 3);
-        setLayout(layout);
+        setLayout(new FlowLayout());
         setOpaque(false);
+        orderLabel.setHorizontalAlignment(SwingConstants.LEFT);
         scoreLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        add(orderLabel);
-        add(usernameLabel);
-        add(scoreLabel);
+        add(newGrid(orderLabel, 20, 15));
+        add(newGrid(usernameLabel, 130, 15));
+        add(newGrid(scoreLabel, 20, 15));
+    }
+
+    private JPanel newGrid(JLabel label, int dx, int dy) {
+        final var grid = new JPanel(new GridLayout());
+        grid.setOpaque(false);
+        grid.setPreferredSize(new Dimension(dx, dy));
+        grid.add(label);
+        return grid;
     }
 
     public void switchToPlayerTurn() {

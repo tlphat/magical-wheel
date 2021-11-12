@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.SwingUtilities;
+
 import fit.apcs.magicalwheel.client.connection.Client;
 import fit.apcs.magicalwheel.client.model.Player;
 import fit.apcs.magicalwheel.client.view.panel.WelcomePanel;
@@ -72,7 +74,7 @@ public class JoinGameHandler implements CompletionHandler<Integer, Void> {
             final var username = reader.readLine().trim();
             listPlayers.add(new Player(order, username));
         }
-        panel.joinWaitingRoom(maxNumPlayers, listPlayers);
+        SwingUtilities.invokeLater(() -> panel.joinWaitingRoom(maxNumPlayers, listPlayers));
     }
 
     @Override

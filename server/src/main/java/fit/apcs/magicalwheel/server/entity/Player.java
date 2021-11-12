@@ -38,6 +38,10 @@ public class Player {
         return username;
     }
 
+    public AsynchronousSocketChannel getChannel() {
+        return socketChannel;
+    }
+
     public int getPoint() {
         return point;
     }
