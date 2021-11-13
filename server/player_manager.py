@@ -21,11 +21,12 @@ class PlayerManager:
 
             posible_next_player_idx += 1
             posible_next_player_idx %= self.num_player
+            count += 1
 
         return None
 
-    def accept_player(self, username, connection_id):
-        player = Player(self, username, connection_id)
+    def accept_player(self, username, socket_id):
+        player = Player(self, username, socket_id)
         self.players.append(player)
         self.num_player += 1
 
@@ -51,3 +52,6 @@ class PlayerManager:
 
     def get_num_player(self):
         return self.num_player
+    
+    def is_current_turn_for_socket_id(self, socket_id):
+        return self.cur_player and self.cur_player.socket_id == socket_id

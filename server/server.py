@@ -1,56 +1,75 @@
-import socket
+import socket, select
 from _thread import *
 import time
 from game import Game
 from config import *
 from constants import *
 
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server.setblocking(0)
+
 
 while True:
     try:
-        sock.bind((HOST, PORT))
-        sock.listen()
+        server.bind((HOST, PORT))
+        server.listen()
         print("Server Started! Waiting for connection...")
         break
     except socket.error as err:
         print(err)
         time.sleep(1)
 
-def threaded_client(conn, addr, game, connection_id):
-    while True:
-        try:
-            if game.network_manager.is_expire_connection(connection_id):
-                break
-
-            data = conn.recv(4096).decode()
-            if not data:
-                break
-
-            game.event_manager.push_request(RawRequestData(data, connection_id))
-        except Exception as e:
-            print(e)
-            break
-
-    print("Lost connection to: ", addr)
-    game.network_manager.remove_connection(connection_id)
-    conn.close()
-
 def run():
     game = Game()
     start_new_thread(game.run, ())
 
-    while game.network_manager.is_open_for_connection():
-        conn, addr = sock.accept()
+    network = game.network_manager
+    network.inputs.append(server)
+    network.sock_to_id = {}
 
-        connection_id = game.network_manager.add_new_connection(conn)
-        if connection_id is None:
-            continue
+    while not game.ended() or len(network.outputs) > 0:
+        readable, writable, exceptional = select.select(network.inputs, network.outputs, network.inputs, TIME_OUT)
 
-        print("Establishment new connection to: ", addr)
+        for s in readable:
+            if s is server:
+                conn, addr = s.accept()
+                conn.setblocking(0)
 
-        start_new_thread(threaded_client, (conn, addr, game, connection_id))
+                socket_id = network.add_new_socket(conn)
+                if socket_id is None:
+                    continue
 
-    print("huhuhuhuhuhuh")
+                print("Establishment new connection to: ", addr)
 
-run()
+                network.inputs.append(conn)
+            else:
+                if network.is_expire_socket(s):
+                    network.close_socket(s)
+                    continue
+                
+                data = s.recv(4096).decode()
+
+                if not data:
+                    network.close_socket(s)
+                    continue
+
+                game.event_manager.push_request(RawRequestData(data, s))
+
+        for s in writable:
+            next_msg = game.network_manager.get_message(s)
+            if not next_msg is None:
+                s.send(next_msg)
+
+        for s in exceptional:
+            network.close_socket(s)
+
+    # Clean connections
+    for s in reversed(network.inputs):
+        if not s is server:
+            network.close_socket(s)
+
+num_game = 1
+while True:
+    print("Creating Game: ", num_game)
+    run()
+    num_game += 1

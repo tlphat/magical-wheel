@@ -8,7 +8,8 @@ class EventManager:
         self.request_queue = []
         self.response_queue = []
         self.request_handler={
-                1: self.game.join_game_handler
+                1: self.game.join_game_handler,
+                4: self.game.receive_guest_handler
                 }
         
         self.lock = threading.Lock()
@@ -24,10 +25,6 @@ class EventManager:
 
     def push_response(self, response):
         self.response_queue.append(response)
-
-    def run(self):
-        self.process_request_queue()
-        self.process_response_queue()
 
     def process_request_queue(self):
         if len(self.request_queue) == 0:
@@ -51,13 +48,16 @@ class EventManager:
 
         self.response_queue.clear()
 
+    def post_process_response_queue(self):
+        self.process_response_queue()
+
     def extract_raw_request(self, raw_request_data):
         try:
             contents = raw_request_data.raw_content.strip().split("\n")
             event_type = int(contents[0])
-            return Request(event_type, RequestData(contents[1:], raw_request_data.connection_id))
+            return Request(event_type, RequestData(contents[1:], self.network_manager.get_socket_id(raw_request_data.sock)))
         except Exception as e:
-            print(e)
+            print("Exception in extract_raw_request: ", e)
             return None
 
 

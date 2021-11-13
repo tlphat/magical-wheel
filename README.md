@@ -17,6 +17,10 @@ Build modules
 ./gradlew clean build
 ```
 
+## Server Configuration
+
+Look at the `config.py` file.
+
 Launch the server
 
 ```bash
