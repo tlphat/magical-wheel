@@ -109,7 +109,7 @@ public class WaitingPanel extends JPanel {
         mainFrame.refresh();
     }
 
-    public void addNewPlayerToRoom(String username) {
+    private void addNewPlayerToRoom(String username) {
         currentNumber++;
         final var player = new Player(currentNumber, username);
         setWaitingMessage();
@@ -153,6 +153,10 @@ public class WaitingPanel extends JPanel {
             }
         }
         throw new IllegalArgumentException("Cannot find main player in the list");
+    }
+
+    public synchronized void updateListPlayers(List<Player> listPlayers) {
+        addNewPlayerToRoom(listPlayers.get(listPlayers.size() - 1).getUsername());
     }
 
 }

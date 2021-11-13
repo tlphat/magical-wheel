@@ -14,6 +14,7 @@ import javax.annotation.Nullable;
  *     <li>checked by the receiver upon receiving the message</li>
  * </ul>
  */
+// TODO: Fix event type number
 public enum EventType {
 
     JOIN_ROOM("1"),
