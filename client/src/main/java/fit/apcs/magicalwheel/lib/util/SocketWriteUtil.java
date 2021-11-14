@@ -19,7 +19,7 @@ public final class SocketWriteUtil {
 
     private static final Logger LOGGER = Logger.getLogger(SocketWriteUtil.class.getName());
     private static final
-        Map<AsynchronousSocketChannel, Queue<String>> CHANNELS_BUFFER = new ConcurrentHashMap<>();
+    Map<AsynchronousSocketChannel, Queue<String>> CHANNELS_BUFFER = new ConcurrentHashMap<>();
 
     private SocketWriteUtil() {
 
@@ -53,26 +53,26 @@ public final class SocketWriteUtil {
         try {
             channel.write(ByteBuffer.wrap(message.getBytes(StandardCharsets.UTF_8)), null,
                           new CompletionHandler<Integer, Void>() {
-                @Override
-                public void completed(Integer result, Void attachment) {
-                    writeMessageFromBuffer();
-                }
+                              @Override
+                              public void completed(Integer result, Void attachment) {
+                                  writeMessageFromBuffer();
+                              }
 
-                private void writeMessageFromBuffer() {
-                    synchronized (SocketWriteUtil.class) {
-                        final var buffer = CHANNELS_BUFFER.get(channel);
-                        if (buffer != null && !buffer.isEmpty()) {
-                            final var nextMessage = buffer.poll();
-                            writeStringToChannel(channel, nextMessage);
-                        }
-                    }
-                }
+                              private void writeMessageFromBuffer() {
+                                  synchronized (SocketWriteUtil.class) {
+                                      final var buffer = CHANNELS_BUFFER.get(channel);
+                                      if (buffer != null && !buffer.isEmpty()) {
+                                          final var nextMessage = buffer.poll();
+                                          writeStringToChannel(channel, nextMessage);
+                                      }
+                                  }
+                              }
 
-                @Override
-                public void failed(Throwable ex, Void attachment) {
-                    LOGGER.log(Level.SEVERE, "Error in sending message", ex);
-                }
-            });
+                              @Override
+                              public void failed(Throwable ex, Void attachment) {
+                                  LOGGER.log(Level.SEVERE, "Error in sending message", ex);
+                              }
+                          });
         } catch (WritePendingException ex) {
             saveMessageToBuffer(channel, message);
         }
@@ -101,28 +101,28 @@ public final class SocketWriteUtil {
         try {
             channel.write(ByteBuffer.wrap(message.getBytes(StandardCharsets.UTF_8)), null,
                           new CompletionHandler<Integer, Void>() {
-                @Override
-                public void completed(Integer result, Void attachment) {
-                    synchronized (SocketWriteUtil.class) {
-                        try {
-                            final var buffer = CHANNELS_BUFFER.get(channel);
-                            if (buffer != null && !buffer.isEmpty()) {
-                                final var nextMessage = buffer.poll();
-                                writeStringToChannel(channel, nextMessage);
-                            } else {
-                                channel.close();
-                            }
-                        } catch (IOException ex) {
-                            LOGGER.log(Level.SEVERE, "Error in closing connection", ex);
-                        }
-                    }
-                }
+                              @Override
+                              public void completed(Integer result, Void attachment) {
+                                  synchronized (SocketWriteUtil.class) {
+                                      try {
+                                          final var buffer = CHANNELS_BUFFER.get(channel);
+                                          if (buffer != null && !buffer.isEmpty()) {
+                                              final var nextMessage = buffer.poll();
+                                              writeStringToChannel(channel, nextMessage);
+                                          } else {
+                                              channel.close();
+                                          }
+                                      } catch (IOException ex) {
+                                          LOGGER.log(Level.SEVERE, "Error in closing connection", ex);
+                                      }
+                                  }
+                              }
 
-                @Override
-                public void failed(Throwable ex, Void attachment) {
-                    LOGGER.log(Level.SEVERE, "Error in sending message", ex);
-                }
-            });
+                              @Override
+                              public void failed(Throwable ex, Void attachment) {
+                                  LOGGER.log(Level.SEVERE, "Error in sending message", ex);
+                              }
+                          });
         } catch (WritePendingException ex) {
             saveMessageToBuffer(channel, message);
         }
