@@ -9,7 +9,6 @@ import java.awt.event.ActionEvent;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.annotation.Nullable;
 import javax.swing.BorderFactory;
@@ -18,12 +17,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import fit.apcs.magicalwheel.client.connection.Client;
+
 public class SubmitPanel extends JPanel {
 
     @Serial
     private static final long serialVersionUID = -8293038273986925047L;
-    private static final Logger LOGGER = Logger.getLogger(SubmitPanel.class.getName());
 
+    private final GamePanel gamePanel;
     private final List<JButton> characterButtons;
     private final JTextField keywordField;
     private final JButton submitButton;
@@ -31,7 +32,8 @@ public class SubmitPanel extends JPanel {
     @Nullable
     private JButton curChoice;
     
-    public SubmitPanel() {
+    public SubmitPanel(GamePanel gamePanel) {
+        this.gamePanel = gamePanel;
         characterButtons = new ArrayList<>();
         keywordField = new JTextField();
         submitButton = new JButton();
@@ -107,9 +109,7 @@ public class SubmitPanel extends JPanel {
         }
         final String character = curChoice.getText();
         final String keyword = keywordField.getText();
-        //TODO: call a finish turn function
-        LOGGER.info(character);
-        LOGGER.info(keyword);
+        Client.getInstance().submitGuess(gamePanel, character, keyword);
     }
 
     private JPanel characterPanel() {

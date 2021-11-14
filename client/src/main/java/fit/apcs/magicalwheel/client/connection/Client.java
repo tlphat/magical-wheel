@@ -1,5 +1,7 @@
 package fit.apcs.magicalwheel.client.connection;
 
+import static fit.apcs.magicalwheel.lib.constant.EventType.PLAYER_GUESS;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -94,6 +96,28 @@ public final class Client {
     public void listenToStartTurnSignal(GamePanel panel) {
         final var byteBuffer = ByteBuffer.allocate(1000);
         final var responseHandler = new StartTurnHandler(byteBuffer, panel, channel);
+        channel.read(byteBuffer, null, responseHandler);
+    }
+
+    public void submitGuess(GamePanel panel, String guessChar, String keyword) {
+        final var message = SocketWriteUtil.getMessageFromLines(PLAYER_GUESS, guessChar, keyword);
+        SocketWriteUtil.writeStringToChannel(channel, message);
+        waitForGuessResponse(panel);
+    }
+
+    private void waitForGuessResponse(GamePanel panel) {
+        final var byteBuffer = ByteBuffer.allocate(1000);
+        final var responseHandler = new CompletionHandler<Integer, Void>() {
+            @Override
+            public void completed(Integer result, Void attachment) {
+
+            }
+
+            @Override
+            public void failed(Throwable exc, Void attachment) {
+
+            }
+        };
         channel.read(byteBuffer, null, responseHandler);
     }
 

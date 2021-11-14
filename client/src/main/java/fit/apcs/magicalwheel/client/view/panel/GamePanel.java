@@ -28,17 +28,23 @@ public class GamePanel extends JPanel {
     private final SubmitPanel submitPanel;
     private final JLabel countdownLabel;
     private final JLabel turnLabel;
+    private final double countdown;
+    private final int maxTurn;
 
-    public GamePanel(int keywordLength, String hint, List<Player> players,
-                     int mainPlayerOrder, MainFrame mainFrame) {
+    public GamePanel(int keywordLength, String hint, double countdown, int maxTurn,
+                     List<Player> players, int mainPlayerOrder, MainFrame mainFrame) {
         this.mainFrame = mainFrame;
+        this.countdown = countdown;
+        this.maxTurn = maxTurn;
+
         scoreboardPanel = new ScoreboardPanel(players, mainPlayerOrder);
         gameInfoPanel = new GameInfoPanel(keywordLength, hint);
-        submitPanel = new SubmitPanel();
+        submitPanel = new SubmitPanel(this);
         countdownLabel = new JLabel();
         turnLabel = new JLabel();
 
         initLayout();
+        setTime(30);
         Client.getInstance().listenToStartTurnSignal(this);
     }
 
@@ -96,11 +102,11 @@ public class GamePanel extends JPanel {
 
     private synchronized String convertTimeToString(int timeInSec) {
         // TODO: implement this method (eg: 120 should be converted into 2:00)
-        return "00:00";
+        return "00:30";
     }
 
     private synchronized void setTurn(int turn) {
-        turnLabel.setText("Turn " + turn);
+        turnLabel.setText(String.format("Turn %d/%d", turn, maxTurn));
         mainFrame.refresh();
     }
 

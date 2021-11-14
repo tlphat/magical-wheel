@@ -59,8 +59,10 @@ public class StartGameHandler implements CompletionHandler<Integer, Void> {
     private static void handleStartGameSignal(BufferedReader reader, WaitingPanel panel) throws IOException {
         final var keywordLength = Integer.parseInt(reader.readLine());
         final var hint = reader.readLine();
+        final var countdown = Double.parseDouble(reader.readLine());
+        final var maxTurn = Integer.parseInt(reader.readLine());
         final var players = readListPlayers(reader);
-        SwingUtilities.invokeLater(() -> panel.startGame(keywordLength, hint, players));
+        SwingUtilities.invokeLater(() -> panel.startGame(keywordLength, hint, countdown, maxTurn, players));
     }
 
     private void handleJoinGameSignal(BufferedReader reader, WaitingPanel panel) throws IOException {

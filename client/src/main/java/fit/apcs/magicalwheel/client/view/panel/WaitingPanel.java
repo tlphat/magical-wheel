@@ -145,10 +145,10 @@ public class WaitingPanel extends JPanel {
         return roomTitle;
     }
 
-    public void startGame(int keywordLength, String hint, List<Player> players) {
+    public void startGame(int keywordLength, String hint, double countdown, int maxTurn, List<Player> players) {
         for (var order = 1; order <= players.size(); ++order) {
             if (players.get(order - 1).equals(mainPlayer)) { // player have order ith is player[i - 1]
-                mainFrame.switchToGamePanel(keywordLength, hint, players, order);
+                mainFrame.switchToGamePanel(keywordLength, hint, countdown, maxTurn, players, order);
                 return;
             }
         }
