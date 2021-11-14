@@ -48,7 +48,7 @@ public class MainFrame extends JFrame {
 
     public synchronized void switchToGamePanel(int keywordLength, String hint,
                                                List<Player> players, int curPlayerOrder) {
-        final var gamePanel = new GamePanel(keywordLength, hint, players, curPlayerOrder);
+        final var gamePanel = new GamePanel(keywordLength, hint, players, curPlayerOrder, this);
         setContentPane(gamePanel);
         refresh();
     }

@@ -13,20 +13,25 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import fit.apcs.magicalwheel.client.connection.Client;
 import fit.apcs.magicalwheel.client.model.Player;
+import fit.apcs.magicalwheel.client.view.MainFrame;
 
 public class GamePanel extends JPanel {
 
     @Serial
     private static final long serialVersionUID = -13480572595592699L;
 
+    private final MainFrame mainFrame;
     private final ScoreboardPanel scoreboardPanel;
     private final GameInfoPanel gameInfoPanel;
     private final SubmitPanel submitPanel;
     private final JLabel countdownLabel;
     private final JLabel turnLabel;
 
-    public GamePanel(int keywordLength, String hint, List<Player> players, int mainPlayerOrder) {
+    public GamePanel(int keywordLength, String hint, List<Player> players,
+                     int mainPlayerOrder, MainFrame mainFrame) {
+        this.mainFrame = mainFrame;
         scoreboardPanel = new ScoreboardPanel(players, mainPlayerOrder);
         gameInfoPanel = new GameInfoPanel(keywordLength, hint);
         submitPanel = new SubmitPanel();
@@ -34,8 +39,7 @@ public class GamePanel extends JPanel {
         turnLabel = new JLabel();
 
         initLayout();
-        setTime("00:00");
-        setTurn(1);
+        Client.getInstance().listenToStartTurnSignal(this);
     }
 
     private void initLayout() {
@@ -85,12 +89,31 @@ public class GamePanel extends JPanel {
         return mainGamePanel;
     }
 
-    private void setTime(String time) {
-        countdownLabel.setText(time);
+    public synchronized void setTime(int timeInSec) {
+        countdownLabel.setText(convertTimeToString(timeInSec));
+        mainFrame.refresh();
     }
 
-    private void setTurn(int turn) {
+    private synchronized String convertTimeToString(int timeInSec) {
+        // TODO: implement this method (eg: 120 should be converted into 2:00)
+        return "00:00";
+    }
+
+    private synchronized void setTurn(int turn) {
         turnLabel.setText("Turn " + turn);
+        mainFrame.refresh();
+    }
+
+    public synchronized void startTurn(String username, int turn) {
+        // TODO: make the text of this username yellow
+        // TODO: if username != main player --> disable all buttons
+        // TODO: if turn < 2 --> disable text field
+        setTurn(turn);
+        startTimer();
+    }
+
+    private void startTimer() {
+        // TODO: implement this method
     }
 
 }
