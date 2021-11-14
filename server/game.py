@@ -21,6 +21,7 @@ class Game:
         self.hint = None
         self.guested_keyword = None
         self.is_pending_next_turn = False
+        self.is_guested_keyword = False
 
     def run(self):
         while not self.state == GameState.END:
@@ -47,7 +48,6 @@ class Game:
 
 
         elapsedTime = self.getElapsedTime()
-        print("Turn elapsed: " + str(elapsedTime) + "s")
 
         if elapsedTime >= TIME_PER_TURN or self.is_pending_next_turn:
             self.next_turn()
@@ -55,11 +55,15 @@ class Game:
 
     def next_turn(self):
         def create_response():
-            response_content = [EventType["START_TURN"], next_player.username, next_player.remaining_turn]
+            response_content = [EventType["START_TURN"], next_player.username, TURN_PER_PLAYER - next_player.remaining_turn]
             return ResponseData(response_content, next_player.socket_id)
         
+        if self.is_guested_keyword:
+            self.end_game()
+            return
+
         next_player = self.player_manager.get_next_player()
-        if next_player is None:
+        if next_player is None or self.origin_keyword == self.guested_keyword:
             self.end_game()
             return
         
@@ -77,7 +81,7 @@ class Game:
 
     def start_game(self):
         def create_response():
-            response_content = [EventType["START_GAME"], len(self.keyword), self.hint]
+            response_content = [EventType["START_GAME"], len(self.keyword), self.hint, TIME_PER_TURN - 0.75, TURN_PER_PLAYER]
             self.player_manager.wrap_to_response(response_content)
             
             return ResponseData(response_content, None)
@@ -96,7 +100,7 @@ class Game:
 
     def end_game(self):
         def create_response():
-            is_complete_keyword = 1 if self.origin_keyword == self.guested_keyword else 0
+            is_complete_keyword = 1 if self.is_guested_keyword else 0
             correct_guest_username = self.player_manager.cur_player.username if is_complete_keyword else ""
             response_content = [EventType["END_GAME"], is_complete_keyword, correct_guest_username]
             self.player_manager.wrap_score_to_response(response_content)
@@ -173,10 +177,9 @@ class Game:
             if guest_keyword == self.origin_keyword:
                 current_player.update_score(5)
                 is_correct_keyword = 1
+                self.is_guested_keyword = True
 
             current_player.eliminate()
-
-        self.is_pending_next_turn = True
 
         return self.publish_response(PUBLIC_RESPONSE, create_response())
 
