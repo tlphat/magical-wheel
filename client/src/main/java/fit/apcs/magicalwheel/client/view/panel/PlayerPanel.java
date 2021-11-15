@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import fit.apcs.magicalwheel.client.model.Player;
+import fit.apcs.magicalwheel.client.view.MainFrame;
 
 public class PlayerPanel extends JPanel {
 
@@ -22,9 +23,11 @@ public class PlayerPanel extends JPanel {
     private final JLabel orderLabel;
     private final JLabel usernameLabel;
     private final JLabel scoreLabel;
+    private final MainFrame mainFrame;
 
-    public PlayerPanel(Player player) {
+    public PlayerPanel(Player player, MainFrame mainFrame) {
         this.player = player;
+        this.mainFrame = mainFrame;
         orderLabel = new JLabel(String.valueOf(player.getOrder()) + ".");
         usernameLabel = new JLabel(player.getUsername());
         scoreLabel = new JLabel(String.valueOf(player.getPoint()));
@@ -58,18 +61,33 @@ public class PlayerPanel extends JPanel {
 
     public void switchToPlayerTurn() {
         usernameLabel.setForeground(Color.CYAN);
+        mainFrame.refresh();
     }
 
     public void unSwitchToPlayerTurn() {
         usernameLabel.setForeground(Color.WHITE);
+        mainFrame.refresh();
     }
 
-    public void updateScore() {
-        scoreLabel.setText(String.valueOf(player.getPoint()));
+    public void updateScore(int score) {
+        player.setPoint(score);
+        scoreLabel.setText(String.valueOf(score));
+        mainFrame.refresh();
     }
 
     public void setMainPlayer() {
         usernameLabel.setText(player.getUsername() + " (You)");
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void eliminate() {
+        orderLabel.setForeground(Color.GRAY);
+        usernameLabel.setForeground(Color.GRAY);
+        scoreLabel.setForeground(Color.GRAY);
+        mainFrame.refresh();
     }
 
 }

@@ -16,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import fit.apcs.magicalwheel.client.model.Player;
+import fit.apcs.magicalwheel.client.view.MainFrame;
 
 public class FinishPanel extends JPanel {
 
@@ -25,13 +26,15 @@ public class FinishPanel extends JPanel {
     private final String winner;
     private final String keyword;
     private final List<PlayerPanel> playerPanels;
+    private final MainFrame mainFrame;
 
-    public FinishPanel(String winner, String keyword, List<Player> players) {
+    public FinishPanel(String winner, String keyword, List<Player> players, MainFrame mainFrame) {
         this.winner = winner;
         this.keyword = keyword;
+        this.mainFrame = mainFrame;
         playerPanels = new ArrayList<>();
         for (Player player: players) {
-            playerPanels.add(new PlayerPanel(player));
+            playerPanels.add(new PlayerPanel(player, mainFrame));
         }
         initLayout();
     }

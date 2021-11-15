@@ -40,9 +40,9 @@ public class GamePanel extends JPanel {
         this.maxTurn = maxTurn;
         mainPlayer = players.get(mainPlayerOrder - 1);
 
-        scoreboardPanel = new ScoreboardPanel(players, mainPlayerOrder);
+        scoreboardPanel = new ScoreboardPanel(players, mainPlayerOrder, mainFrame);
         gameInfoPanel = new GameInfoPanel(keywordLength, hint);
-        submitPanel = new SubmitPanel(this);
+        submitPanel = new SubmitPanel(this, mainFrame);
         countdownLabel = new JLabel();
         turnLabel = new JLabel();
 
@@ -105,7 +105,15 @@ public class GamePanel extends JPanel {
 
     private synchronized String convertTimeToString(int timeInSec) {
         // TODO: implement this method (eg: 120 should be converted into 2:00)
-        return "00:30";
+        String mins = String.valueOf(timeInSec / 60);
+        String secs = String.valueOf(timeInSec / 60);
+        if (timeInSec / 60 < 10) {
+            mins = "0" + mins;
+        }
+        if (timeInSec % 60 < 10) {
+            secs = "0" + secs;
+        }
+        return mins + ":" + secs;
     }
 
     private synchronized void setTurn(int turn) {
@@ -114,16 +122,19 @@ public class GamePanel extends JPanel {
     }
 
     public synchronized void startTurn(String username, int turn) {
-        // TODO: make the text of this username yellow
         setTurn(turn);
-        if (username.equals(mainPlayer.getUsername())) {
-            // TODO: disable all buttons
+        scoreboardPanel.setCurrentPlayer(username);
+        if (!username.equals(mainPlayer.getUsername())) {
+            submitPanel.disableSubmission(false); 
             Client.getInstance().waitForGuessResponse(this);
         } else {
-            // TODO: enable buttons
-            // TODO: if turn < 2 --> disable text field
+            submitPanel.disableSubmission(true);
+            if (turn < 2) {
+                submitPanel.disableKeywordField();
+            }
             startTimer();
         }
+        mainFrame.refresh();
     }
 
     private void startTimer() {
@@ -131,11 +142,11 @@ public class GamePanel extends JPanel {
     }
 
     public void updateScore(String username, int score) {
-        // TODO: update score board of player
+        scoreboardPanel.updateScore(username, score);
     }
 
     public void updateKeyword(String keyword) {
-        // TODO: update keyword
+        gameInfoPanel.setNewKeyword(keyword);
     }
 
     public void keywordGotGuessed() {
@@ -143,7 +154,7 @@ public class GamePanel extends JPanel {
     }
 
     public void eliminatePlayer(String username) {
-        // TODO: eliminate this player (his/her username on scoreboard should be grayed out)
+        scoreboardPanel.eliminatePlayer(username);
     }
 
 }

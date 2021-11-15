@@ -15,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import fit.apcs.magicalwheel.client.model.Player;
+import fit.apcs.magicalwheel.client.view.MainFrame;
 
 public class ScoreboardPanel extends JPanel {
 
@@ -23,9 +24,11 @@ public class ScoreboardPanel extends JPanel {
 
     private List<PlayerPanel> playerPanels;
     private final int mainPlayerOrder;
+    private final MainFrame mainFrame;
 
-    public ScoreboardPanel(List<Player> players, int mainPlayerOrder) {
+    public ScoreboardPanel(List<Player> players, int mainPlayerOrder, MainFrame mainFrame) {
         this.mainPlayerOrder = mainPlayerOrder;
+        this.mainFrame = mainFrame;
         final var layout = new FlowLayout();
         initPlayerPanels(players);
         layout.setHgap(30);
@@ -40,7 +43,7 @@ public class ScoreboardPanel extends JPanel {
     private void initPlayerPanels(List<Player> players) {
         playerPanels = new ArrayList<>();
         for (Player player: players) {
-            playerPanels.add(new PlayerPanel(player));
+            playerPanels.add(new PlayerPanel(player, mainFrame));
         }
     }
 
@@ -80,6 +83,33 @@ public class ScoreboardPanel extends JPanel {
 
     private void setMainPlayer() {
         playerPanels.get(mainPlayerOrder - 1).setMainPlayer();
+    }
+
+    public void setCurrentPlayer(String username) {
+        for (PlayerPanel panel: playerPanels) {
+            if (panel.getPlayer().getUsername().equals(username)) {
+                panel.switchToPlayerTurn();
+            }
+            else {
+                panel.unSwitchToPlayerTurn();
+            }
+        }
+    }
+
+    public void updateScore(String username, int score) {
+        for (PlayerPanel panel: playerPanels) {
+            if (panel.getPlayer().getUsername().equals(username)) {
+                panel.updateScore(score);
+            }
+        }
+    }
+
+    public void eliminatePlayer(String username) {
+        for (PlayerPanel panel: playerPanels) {
+            if (panel.getPlayer().getUsername().equals(username)) {
+                panel.eliminate();
+            }
+        }
     }
 
 }

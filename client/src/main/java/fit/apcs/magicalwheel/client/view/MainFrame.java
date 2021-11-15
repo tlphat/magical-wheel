@@ -35,7 +35,7 @@ public class MainFrame extends JFrame {
 
     @SuppressWarnings("unused")
     private void switchToFinishPanel(String winner, String keyword, List<Player> players) {
-        final var finishPanel = new FinishPanel(winner, keyword, players);
+        final var finishPanel = new FinishPanel(winner, keyword, players, this);
         setContentPane(finishPanel);
         refresh();
     }

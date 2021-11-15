@@ -10,6 +10,8 @@ import java.nio.channels.CompletionHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.SwingUtilities;
+
 import fit.apcs.magicalwheel.client.connection.Client;
 import fit.apcs.magicalwheel.client.view.panel.GamePanel;
 import fit.apcs.magicalwheel.lib.constant.EventType;
@@ -53,8 +55,8 @@ public class GuessResponseHandler implements CompletionHandler<Integer, Void> {
     }
 
     private void updateScoreAndKeyword(String username, String keyword, int score) {
-        panel.updateScore(username, score);
-        panel.updateKeyword(keyword);
+        SwingUtilities.invokeLater(() -> panel.updateScore(username, score));
+        SwingUtilities.invokeLater(() -> panel.updateKeyword(keyword));
     }
 
     private void handleGuessKeywordSignal(String username, String guessKeyword, boolean isCorrectKeyWord) {

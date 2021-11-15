@@ -4,7 +4,7 @@ public class Player {
 
     private final String username;
     private final int order;
-    private final int point;
+    private int point;
 
     public Player(int order, String username) {
         this.order = order;
@@ -38,6 +38,10 @@ public class Player {
             return true;
         }
         return obj instanceof Player && ((Player) obj).username.equals(username);
+    }
+
+    public void setPoint(int score) {
+        point = score;
     }
 
 }

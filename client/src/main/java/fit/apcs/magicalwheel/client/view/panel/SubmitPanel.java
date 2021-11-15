@@ -7,6 +7,7 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.io.Serial;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import fit.apcs.magicalwheel.client.connection.Client;
+import fit.apcs.magicalwheel.client.view.MainFrame;
 
 public class SubmitPanel extends JPanel {
 
@@ -28,12 +30,14 @@ public class SubmitPanel extends JPanel {
     private final List<JButton> characterButtons;
     private final JTextField keywordField;
     private final JButton submitButton;
+    private final MainFrame mainFrame;
 
     @Nullable
     private JButton curChoice;
     
-    public SubmitPanel(GamePanel gamePanel) {
+    public SubmitPanel(GamePanel gamePanel, MainFrame mainFrame) {
         this.gamePanel = gamePanel;
+        this.mainFrame = mainFrame;
         characterButtons = new ArrayList<>();
         keywordField = new JTextField();
         submitButton = new JButton();
@@ -47,6 +51,7 @@ public class SubmitPanel extends JPanel {
         setOpaque(false);
         add(characterPanel());
         add(keywordPanel());
+        disableSubmission(false);
     }
 
     private JButton characterButton(char c) {
@@ -110,7 +115,8 @@ public class SubmitPanel extends JPanel {
         final String character = curChoice.getText();
         final String keyword = keywordField.getText();
         Client.getInstance().submitGuess(gamePanel, character, keyword);
-        // TODO: disable submit button
+        disableSubmission(false);
+        mainFrame.refresh();
     }
 
     private JPanel characterPanel() {
@@ -126,12 +132,15 @@ public class SubmitPanel extends JPanel {
         return panel;
     }
 
-    public void disableSubmission() {
+    public void disableSubmission(boolean disable) {
         for (JButton button: characterButtons) {
-            button.setEnabled(false);
+            button.setEnabled(disable);
         }
-        keywordField.setEnabled(false);
-        submitButton.setEnabled(false);
+        submitButton.setEnabled(disable);
+        keywordField.setEnabled(disable);
     }
 
+    public void disableKeywordField() {
+        keywordField.setEnabled(false);
+    }
 }
