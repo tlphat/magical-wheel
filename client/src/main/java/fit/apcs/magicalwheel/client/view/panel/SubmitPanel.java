@@ -18,7 +18,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import fit.apcs.magicalwheel.client.connection.Client;
-import fit.apcs.magicalwheel.client.model.Player;
 
 public class SubmitPanel extends JPanel {
 
@@ -29,15 +28,12 @@ public class SubmitPanel extends JPanel {
     private final List<JButton> characterButtons;
     private final JTextField keywordField;
     private final JButton submitButton;
-    private final transient Player mainPlayer;
 
     @Nullable
     private JButton curChoice;
     
-    public SubmitPanel(GamePanel gamePanel, Player mainPlayer) {
+    public SubmitPanel(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
-        this.mainPlayer = mainPlayer;
-
         characterButtons = new ArrayList<>();
         keywordField = new JTextField();
         submitButton = new JButton();
@@ -113,7 +109,8 @@ public class SubmitPanel extends JPanel {
         }
         final String character = curChoice.getText();
         final String keyword = keywordField.getText();
-        Client.getInstance().submitGuess(gamePanel, character, keyword, mainPlayer);
+        Client.getInstance().submitGuess(gamePanel, character, keyword);
+        // TODO: disable submit button
     }
 
     private JPanel characterPanel() {

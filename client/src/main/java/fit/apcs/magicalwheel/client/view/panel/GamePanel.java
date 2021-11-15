@@ -42,7 +42,7 @@ public class GamePanel extends JPanel {
 
         scoreboardPanel = new ScoreboardPanel(players, mainPlayerOrder);
         gameInfoPanel = new GameInfoPanel(keywordLength, hint);
-        submitPanel = new SubmitPanel(this, mainPlayer);
+        submitPanel = new SubmitPanel(this);
         countdownLabel = new JLabel();
         turnLabel = new JLabel();
 
@@ -118,7 +118,7 @@ public class GamePanel extends JPanel {
         setTurn(turn);
         if (username.equals(mainPlayer.getUsername())) {
             // TODO: disable all buttons
-            Client.getInstance().waitForGuessResponse(this, mainPlayer);
+            Client.getInstance().waitForGuessResponse(this);
         } else {
             // TODO: enable buttons
             // TODO: if turn < 2 --> disable text field
