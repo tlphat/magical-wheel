@@ -112,7 +112,7 @@ public class GamePanel extends JPanel {
 
     public synchronized void startTurn(String username, int turn) {
         // TODO: make the text of this username yellow
-        // TODO: if username != main player --> disable all buttons
+        // TODO: if username != main player --> disable all buttons, listen to guess response
         // TODO: if turn < 2 --> disable text field
         setTurn(turn);
         startTimer();

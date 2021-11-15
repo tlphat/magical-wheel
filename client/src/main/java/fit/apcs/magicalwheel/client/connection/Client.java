@@ -2,6 +2,7 @@ package fit.apcs.magicalwheel.client.connection;
 
 import static fit.apcs.magicalwheel.lib.constant.EventType.PLAYER_GUESS;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -109,13 +110,35 @@ public final class Client {
         final var byteBuffer = ByteBuffer.allocate(1000);
         final var responseHandler = new CompletionHandler<Integer, Void>() {
             @Override
-            public void completed(Integer result, Void attachment) {
+            public void completed(Integer numBytes, Void attachment) {
+                LOGGER.log(Level.INFO, "Response:\n{0}", SocketReadUtil.byteBufferToString(byteBuffer, numBytes));
+                try {
+                    final var reader = SocketReadUtil.byteBufferToReader(byteBuffer, numBytes);
+                    validateEventType(reader);
+                    // TODO: implement logic to handle guess response
+                } catch (IOException ex) {
+                    LOGGER.log(Level.SEVERE, "Error in parsing response", ex);
+                }
+            }
 
+            private void validateEventType(BufferedReader reader) throws IOException {
+                final var type = EventType.fromString(reader.readLine());
+                if (type != PLAYER_GUESS) {
+                    LOGGER.log(Level.WARNING, "Expect response of type {0}, got {1}",
+                               new Object[]{ PLAYER_GUESS, type});
+                    clearAndReadBuffer();
+                    throw new IOException("Event type is not correct");
+                }
+            }
+
+            private void clearAndReadBuffer() {
+                byteBuffer.clear();
+                channel.read(byteBuffer, null, this);
             }
 
             @Override
-            public void failed(Throwable exc, Void attachment) {
-
+            public void failed(Throwable ex, Void attachment) {
+                LOGGER.log(Level.WARNING, "Cannot get response from server", ex);
             }
         };
         channel.read(byteBuffer, null, responseHandler);
