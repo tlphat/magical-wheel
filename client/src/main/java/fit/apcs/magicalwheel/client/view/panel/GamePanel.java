@@ -30,16 +30,19 @@ public class GamePanel extends JPanel {
     private final JLabel turnLabel;
     private final double countdown;
     private final int maxTurn;
+    private final transient Player mainPlayer;
+    private boolean isKeywordGuessed = false;
 
     public GamePanel(int keywordLength, String hint, double countdown, int maxTurn,
                      List<Player> players, int mainPlayerOrder, MainFrame mainFrame) {
         this.mainFrame = mainFrame;
         this.countdown = countdown;
         this.maxTurn = maxTurn;
+        mainPlayer = players.get(mainPlayerOrder - 1);
 
         scoreboardPanel = new ScoreboardPanel(players, mainPlayerOrder);
         gameInfoPanel = new GameInfoPanel(keywordLength, hint);
-        submitPanel = new SubmitPanel(this);
+        submitPanel = new SubmitPanel(this, mainPlayer);
         countdownLabel = new JLabel();
         turnLabel = new JLabel();
 
@@ -112,14 +115,35 @@ public class GamePanel extends JPanel {
 
     public synchronized void startTurn(String username, int turn) {
         // TODO: make the text of this username yellow
-        // TODO: if username != main player --> disable all buttons, listen to guess response
-        // TODO: if turn < 2 --> disable text field
         setTurn(turn);
-        startTimer();
+        if (username.equals(mainPlayer.getUsername())) {
+            // TODO: disable all buttons
+            Client.getInstance().waitForGuessResponse(this, mainPlayer);
+        } else {
+            // TODO: enable buttons
+            // TODO: if turn < 2 --> disable text field
+            startTimer();
+        }
     }
 
     private void startTimer() {
         // TODO: implement this method
+    }
+
+    public void updateScore(String username, int score) {
+        // TODO: update score board of player
+    }
+
+    public void updateKeyword(String keyword) {
+        // TODO: update keyword
+    }
+
+    public void keywordGotGuessed() {
+        isKeywordGuessed = true;
+    }
+
+    public void eliminatePlayer(String username) {
+        // TODO: eliminate this player (his/her username on scoreboard should be grayed out)
     }
 
 }

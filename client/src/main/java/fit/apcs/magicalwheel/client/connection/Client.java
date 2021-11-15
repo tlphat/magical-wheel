@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import fit.apcs.magicalwheel.client.connection.handler.JoinGameHandler;
 import fit.apcs.magicalwheel.client.connection.handler.StartGameHandler;
 import fit.apcs.magicalwheel.client.connection.handler.StartTurnHandler;
+import fit.apcs.magicalwheel.client.model.Player;
 import fit.apcs.magicalwheel.client.view.panel.GamePanel;
 import fit.apcs.magicalwheel.client.view.panel.WaitingPanel;
 import fit.apcs.magicalwheel.client.view.panel.WelcomePanel;
@@ -100,22 +101,43 @@ public final class Client {
         channel.read(byteBuffer, null, responseHandler);
     }
 
-    public void submitGuess(GamePanel panel, String guessChar, String keyword) {
+    public void submitGuess(GamePanel panel, String guessChar, String keyword, Player mainPlayer) {
         final var message = SocketWriteUtil.getMessageFromLines(PLAYER_GUESS, guessChar, keyword);
         SocketWriteUtil.writeStringToChannel(channel, message);
-        waitForGuessResponse(panel);
+        waitForGuessResponse(panel, mainPlayer);
     }
 
-    private void waitForGuessResponse(GamePanel panel) {
+    public void waitForGuessResponse(GamePanel panel, Player mainPlayer) {
         final var byteBuffer = ByteBuffer.allocate(1000);
         final var responseHandler = new CompletionHandler<Integer, Void>() {
             @Override
+            @SuppressWarnings("unused")
             public void completed(Integer numBytes, Void attachment) {
                 LOGGER.log(Level.INFO, "Response:\n{0}", SocketReadUtil.byteBufferToString(byteBuffer, numBytes));
                 try {
                     final var reader = SocketReadUtil.byteBufferToReader(byteBuffer, numBytes);
                     validateEventType(reader);
-                    // TODO: implement logic to handle guess response
+                    final var username = reader.readLine().trim();
+                    final var guessChar = reader.readLine();
+                    final var guessKeyword = reader.readLine();
+                    final var keyword = reader.readLine();
+                    final var score = Integer.parseInt(reader.readLine());
+                    final var isCorrectKeyWord = Integer.parseInt(reader.readLine()) != 0;
+                    final var isEnd = Integer.parseInt(reader.readLine()) != 0;
+                    if (mainPlayer.getUsername().equals(username)) {
+                        listenToStartTurnSignal(panel);
+                    } else {
+                        panel.updateScore(username, score);
+                        panel.updateKeyword(keyword);
+                        if (!guessKeyword.isEmpty()) {
+                            if (isCorrectKeyWord) {
+                                panel.keywordGotGuessed();
+                            } else {
+                                panel.eliminatePlayer(username);
+                            }
+                        }
+                    }
+                    // TODO: handle end game signal
                 } catch (IOException ex) {
                     LOGGER.log(Level.SEVERE, "Error in parsing response", ex);
                 }
