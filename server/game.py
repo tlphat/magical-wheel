@@ -146,7 +146,7 @@ class Game:
 
     def receive_guest_handler(self, request_data):
         def create_response():
-            response_content = [EventType["PLAYER_GUEST"], current_player.username, guest_char, self.guested_keyword, current_player.score, is_correct_keyword, 1 if current_player.eliminated() else 0]
+            response_content = [EventType["PLAYER_GUEST"], current_player.username, guest_char, guest_keyword, self.guested_keyword, current_player.score, is_correct_keyword, 1 if current_player.eliminated() else 0]
             return ResponseData(response_content, socket_id)
 
         content = request_data.content
