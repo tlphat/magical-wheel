@@ -8,6 +8,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.io.Serial;
 import java.util.List;
+import java.util.Timer;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -15,6 +16,7 @@ import javax.swing.JPanel;
 
 import fit.apcs.magicalwheel.client.connection.Client;
 import fit.apcs.magicalwheel.client.model.Player;
+import fit.apcs.magicalwheel.client.timer.RoundTimerTask;
 import fit.apcs.magicalwheel.client.view.MainFrame;
 
 public class GamePanel extends JPanel {
@@ -116,7 +118,7 @@ public class GamePanel extends JPanel {
     public synchronized void startTurn(String username, int turn) {
         // TODO: make the text of this username yellow
         setTurn(turn);
-        if (username.equals(mainPlayer.getUsername())) {
+        if (!username.equals(mainPlayer.getUsername())) {
             // TODO: disable all buttons
             Client.getInstance().waitForGuessResponse(this);
         } else {
@@ -127,7 +129,11 @@ public class GamePanel extends JPanel {
     }
 
     private void startTimer() {
-        // TODO: implement this method
+        final var timer = new Timer();
+        final var timerTask = new RoundTimerTask((int) countdown, this, timer);
+        final var delay = 0; // no delay
+        final var timeToNextTask = 1000; // in ms
+        timer.scheduleAtFixedRate(timerTask, delay, timeToNextTask);
     }
 
     public void updateScore(String username, int score) {
