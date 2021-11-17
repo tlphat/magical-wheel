@@ -34,6 +34,7 @@ public class GamePanel extends JPanel {
     private final int maxTurn;
     private final transient Player mainPlayer;
     private boolean isKeywordGuessed = false;
+    private transient Timer timer = new Timer();
 
     public GamePanel(int keywordLength, String hint, double countdown, int maxTurn,
                      List<Player> players, int mainPlayerOrder, MainFrame mainFrame) {
@@ -49,7 +50,7 @@ public class GamePanel extends JPanel {
         turnLabel = new JLabel();
 
         initLayout();
-        setTime(30);
+        setTime((int) countdown);
         Client.getInstance().listenToStartTurnSignal(this);
     }
 
@@ -106,15 +107,15 @@ public class GamePanel extends JPanel {
     }
 
     private synchronized String convertTimeToString(int timeInSec) {
-        String mins = String.valueOf(timeInSec / 60);
-        String secs = String.valueOf(timeInSec / 60);
+        var mins = String.valueOf(timeInSec / 60);
+        var secs = String.valueOf(timeInSec % 60);
         if (timeInSec / 60 < 10) {
-            mins = "0" + mins;
+            mins = '0' + mins;
         }
         if (timeInSec % 60 < 10) {
-            secs = "0" + secs;
+            secs = '0' + secs;
         }
-        return mins + ":" + secs;
+        return mins + ':' + secs;
     }
 
     private synchronized void setTurn(int turn) {
@@ -124,6 +125,7 @@ public class GamePanel extends JPanel {
 
     public synchronized void startTurn(String username, int turn) {
         setTurn(turn);
+        setTime((int) countdown);
         scoreboardPanel.setCurrentPlayer(username);
         if (!username.equals(mainPlayer.getUsername())) {
             submitPanel.disableSubmission(false);
@@ -139,7 +141,7 @@ public class GamePanel extends JPanel {
     }
 
     private void startTimer() {
-        final var timer = new Timer();
+        timer = new Timer();
         final var timerTask = new RoundTimerTask((int) countdown, this, timer);
         final var delay = 0; // no delay
         final var timeToNextTask = 1000; // in ms
@@ -160,6 +162,14 @@ public class GamePanel extends JPanel {
 
     public void eliminatePlayer(String username) {
         scoreboardPanel.eliminatePlayer(username);
+    }
+
+    public synchronized void disableSubmitButton() {
+        submitPanel.disableSubmission(false);
+    }
+
+    public synchronized void cancelTimer() {
+        timer.cancel();
     }
 
 }

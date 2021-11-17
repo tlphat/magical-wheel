@@ -24,15 +24,14 @@ public class RoundTimerTask extends TimerTask {
     @Override
     public void run() {
         final var time = curTime.decrementAndGet();
-        if (time < -1) {
+        if (time < 0) {
             return;
         }
-        if (time == -1) {
-            timer.cancel();
-            // TODO: disable all buttons
+        SwingUtilities.invokeLater(() -> panel.setTime(time));
+        if (time == 0) {
+            panel.disableSubmitButton();
             Client.getInstance().waitForGuessResponse(panel);
-        } else {
-            SwingUtilities.invokeLater(() -> panel.setTime(time));
+            timer.cancel();
         }
     }
 
