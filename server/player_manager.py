@@ -11,7 +11,7 @@ class PlayerManager:
         self.num_player = 0
 
     def has_next_player(self):
-        posible_next_player_idx = self.get_player_idx(self.cur_player) if self.cur_player else 0
+        posible_next_player_idx = 0
 
         count = 0
         while count < self.num_player:
@@ -42,7 +42,7 @@ class PlayerManager:
         else:
             self.next_player = None
 
-        posible_next_player_idx = self.get_player_idx(self.cur_player) if self.cur_player else 0
+        posible_next_player_idx = (self.get_player_idx(self.cur_player) + 1) % self.num_player if self.cur_player else 0
 
         count = 0
         while count < self.num_player:
