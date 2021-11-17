@@ -13,7 +13,7 @@ class Player:
         return self.is_eliminate or self.remaining_turn <= 0
 
     def eliminate(self):
-        self.eliminate = True
+        self.is_eliminate = True
 
     def take_turn(self):
         self.remaining_turn -= 1
