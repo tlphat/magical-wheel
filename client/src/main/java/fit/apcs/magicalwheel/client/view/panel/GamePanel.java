@@ -127,15 +127,15 @@ public class GamePanel extends JPanel {
         setTurn(turn);
         setTime((int) countdown);
         scoreboardPanel.setCurrentPlayer(username);
-        if (!username.equals(mainPlayer.getUsername())) {
-            submitPanel.disableSubmission(false);
-            Client.getInstance().waitForGuessResponse(this);
-        } else {
+        if (username.equals(mainPlayer.getUsername())) {
             submitPanel.disableSubmission(true);
             if (turn < 2) {
                 submitPanel.disableKeywordField();
             }
             startTimer();
+        } else {
+            submitPanel.disableSubmission(false);
+            Client.getInstance().waitForGuessResponse(this);
         }
         mainFrame.refresh();
     }
