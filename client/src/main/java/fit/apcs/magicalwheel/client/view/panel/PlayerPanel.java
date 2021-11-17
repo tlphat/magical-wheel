@@ -65,7 +65,12 @@ public class PlayerPanel extends JPanel {
     }
 
     public void unSwitchToPlayerTurn() {
-        usernameLabel.setForeground(Color.WHITE);
+        if (player.isActive()) {
+            usernameLabel.setForeground(Color.WHITE);
+        }
+        else {
+            usernameLabel.setForeground(Color.GRAY);
+        }
         mainFrame.refresh();
     }
 
