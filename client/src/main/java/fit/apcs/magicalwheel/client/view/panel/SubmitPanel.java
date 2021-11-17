@@ -67,7 +67,6 @@ public class SubmitPanel extends JPanel {
         button.setMargin(new Insets(2, 2, 2, 2));
         button.setForeground(Color.WHITE);
         button.setBackground(Color.BLACK);
-        button.setBorder(BorderFactory.createLineBorder(Color.WHITE));
         button.addActionListener(this::onCharButtonClickListener);
         button.setFocusPainted(false);
         return button;
