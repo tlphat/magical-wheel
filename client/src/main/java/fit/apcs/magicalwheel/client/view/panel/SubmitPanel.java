@@ -1,6 +1,7 @@
 package fit.apcs.magicalwheel.client.view.panel;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -46,17 +47,24 @@ public class SubmitPanel extends JPanel {
             characterButtons.add(characterButton(c));
         }
 
-        setLayout(new GridLayout(2, 1));
-        setOpaque(false);
-        add(characterPanel());
-        add(keywordPanel());
+        initLayout();
         disableSubmission(false);
+    }
+
+    private void initLayout() {
+        final var gbc = new GridBagConstraints();
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        setLayout(new GridBagLayout());
+        setOpaque(false);
+        setBackground(Color.BLUE);
+        add(characterPanel(), gbc);
+        add(keywordPanel(), gbc);
     }
 
     private JButton characterButton(char c) {
         final var button = new JButton();
         button.setText(Character.toString(c));
-        button.setMargin(new Insets(5, 5, 5, 5));
+        button.setMargin(new Insets(2, 2, 2, 2));
         button.setForeground(Color.WHITE);
         button.setBackground(Color.BLACK);
         button.setBorder(BorderFactory.createLineBorder(Color.WHITE));
@@ -92,7 +100,7 @@ public class SubmitPanel extends JPanel {
         submitButton.setText("Submit");
         submitButton.addActionListener(event -> onSubmitButtonListener());
         label.setForeground(Color.WHITE);
-        gbc.insets = new Insets(10, 0, 0, 0);
+        gbc.insets = new Insets(10, 10, 0, 0);
         gbc.anchor = GridBagConstraints.LINE_START;
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -122,8 +130,8 @@ public class SubmitPanel extends JPanel {
     private JPanel characterPanel() {
         final var panel = new JPanel();
         final var layout = new GridLayout(2, 13);
-        layout.setHgap(2);
-        layout.setVgap(2);
+        layout.setHgap(3);
+        layout.setVgap(3);
         panel.setLayout(layout);
         panel.setOpaque(false);
         for (JButton button: characterButtons) {
