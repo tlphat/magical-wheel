@@ -84,6 +84,7 @@ public class PlayerPanel extends JPanel {
     }
 
     public void eliminate() {
+        player.eliminate();
         orderLabel.setForeground(Color.GRAY);
         usernameLabel.setForeground(Color.GRAY);
         scoreLabel.setForeground(Color.GRAY);

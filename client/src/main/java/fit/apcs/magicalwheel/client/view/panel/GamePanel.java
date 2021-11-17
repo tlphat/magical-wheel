@@ -156,11 +156,11 @@ public class GamePanel extends JPanel {
         gameInfoPanel.setNewKeyword(keyword);
     }
 
-    public void keywordGotGuessed() {
+    public synchronized void keywordGotGuessed() {
         isKeywordGuessed = true;
     }
 
-    public void eliminatePlayer(String username) {
+    public synchronized void eliminatePlayer(String username) {
         scoreboardPanel.eliminatePlayer(username);
     }
 

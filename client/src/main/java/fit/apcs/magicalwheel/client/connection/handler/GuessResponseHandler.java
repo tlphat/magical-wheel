@@ -62,9 +62,9 @@ public class GuessResponseHandler implements CompletionHandler<Integer, Void> {
     private void handleGuessKeywordSignal(String username, String guessKeyword, boolean isCorrectKeyWord) {
         if (!guessKeyword.isEmpty()) {
             if (isCorrectKeyWord) {
-                panel.keywordGotGuessed();
+                SwingUtilities.invokeLater(panel::keywordGotGuessed);
             } else {
-                panel.eliminatePlayer(username);
+                SwingUtilities.invokeLater(() -> panel.eliminatePlayer(username));
             }
         }
     }

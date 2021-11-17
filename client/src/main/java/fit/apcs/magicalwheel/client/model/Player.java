@@ -5,6 +5,7 @@ public class Player {
     private final String username;
     private final int order;
     private int point;
+    private boolean active = true;
 
     public Player(int order, String username) {
         this.order = order;
@@ -22,6 +23,10 @@ public class Player {
 
     public int getPoint() {
         return point;
+    }
+
+    public boolean isActive() {
+        return active;
     }
 
     @Override
@@ -42,6 +47,10 @@ public class Player {
 
     public void setPoint(int score) {
         point = score;
+    }
+
+    public void eliminate() {
+        active = false;
     }
 
 }
