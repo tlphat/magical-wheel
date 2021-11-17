@@ -171,7 +171,7 @@ class Game:
             num_correct_char = self.keyword.count(guest_char)
             if num_correct_char > 0:
                 current_player.update_score(1)
-                player_manager.set_next_player(current_player)
+                self.player_manager.set_next_player(current_player)
 
                 self.keyword = self.keyword.replace(guest_char, '')
                 for i in range(len(self.origin_keyword)):
