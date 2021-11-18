@@ -2,12 +2,15 @@ package fit.apcs.magicalwheel.client.view.panel;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.io.Serial;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -28,13 +31,17 @@ public class FinishPanel extends JPanel {
     private final List<PlayerPanel> playerPanels;
     private final MainFrame mainFrame;
 
-    public FinishPanel(String winner, String keyword, List<Player> players, MainFrame mainFrame) {
+    public FinishPanel(String winner, String keyword, List<Player> players, MainFrame mainFrame, Player mainPlayer) {
         this.winner = winner;
         this.keyword = keyword;
         this.mainFrame = mainFrame;
+        players.sort(Comparator.comparing(Player::getPoint).reversed());
         playerPanels = new ArrayList<>();
         for (Player player: players) {
             playerPanels.add(new PlayerPanel(player, mainFrame));
+            if (player == mainPlayer) {
+                playerPanels.get(playerPanels.size() - 1).setMainPlayer();
+            }
         }
         initLayout();
     }
@@ -64,6 +71,10 @@ public class FinishPanel extends JPanel {
     @SuppressWarnings("MethodMayBeStatic")
     private JButton returnButton() {
         final var button = new JButton("Return");
+        button.setOpaque(false);
+        button.setForeground(Color.YELLOW);
+        button.setBackground(Color.BLACK);
+        button.setFocusPainted(false);
         //TODO: switch to welcome panel
         //button.addActionListener(e -> );
         return button;
@@ -97,10 +108,17 @@ public class FinishPanel extends JPanel {
     private JPanel gameResult() {
         final var panel = new JPanel(new GridBagLayout());
         final var gbc = new GridBagConstraints();
+        String winMessage;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         panel.setOpaque(false);
-        // FIXME: If winner.isEmpty(), choose the player with highest score
-        panel.add(textPanel("Winner: ", winner), gbc);
+        if (winner.isEmpty()) {
+            winMessage = "No body could guess the keyword";
+            panel.add(textPanel(winMessage, ""), gbc);
+        }
+        else {
+            winMessage = " has successfully guessed the keyword. Congrats!";
+            panel.add(textPanel(winner, winMessage), gbc);
+        }
         panel.add(textPanel("Keyword: ", keyword), gbc);
         return panel;
     }
@@ -121,7 +139,8 @@ public class FinishPanel extends JPanel {
     @SuppressWarnings("MethodMayBeStatic")
     private JLabel title() {
         final var label = new JLabel("GAME OVER");
-        label.setForeground(Color.WHITE);
+        label.setForeground(Color.YELLOW);
+        label.setFont(new Font("Calibri", Font.PLAIN, 25));
         return label;
     }
 

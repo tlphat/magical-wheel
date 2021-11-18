@@ -224,7 +224,7 @@ public class GamePanel extends JPanel {
         verifyWinnerUsernameIsValid(winner);
         verifyNumPlayers(numPlayers);
         verifyPlayersScore(listScore);
-        mainFrame.switchToFinishGame(winner, keyword, players);
+        mainFrame.switchToFinishGame(winner, keyword, players, mainPlayer);
     }
 
     private void verifyIfKeywordHasBeenGuessed(boolean isCompletedKeyword) {
