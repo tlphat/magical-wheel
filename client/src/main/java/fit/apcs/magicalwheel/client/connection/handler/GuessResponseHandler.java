@@ -47,10 +47,17 @@ public class GuessResponseHandler implements CompletionHandler<Integer, Void> {
             final var isEnd = Integer.parseInt(reader.readLine()) != 0;
             updateScoreAndKeyword(username, keyword, score);
             handleGuessKeywordSignal(username, guessKeyword, isCorrectKeyWord);
-            Client.getInstance().listenToStartTurnSignal(panel);
-            // TODO: handle end game signal
+            directToEndGameOrNewTurn(isEnd);
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Error in parsing response", ex);
+        }
+    }
+
+    private void directToEndGameOrNewTurn(boolean isEnd) {
+        if (isEnd) {
+            Client.getInstance().listenToEndGameSignal(panel);
+        } else {
+            Client.getInstance().listenToStartTurnSignal(panel);
         }
     }
 

@@ -32,6 +32,7 @@ public class GamePanel extends JPanel {
     private final JLabel turnLabel;
     private final double countdown;
     private final int maxTurn;
+    private final transient List<Player> players;
     private final transient Player mainPlayer;
     private boolean isKeywordGuessed = false;
     private transient Timer timer = new Timer();
@@ -41,6 +42,7 @@ public class GamePanel extends JPanel {
         this.mainFrame = mainFrame;
         this.countdown = countdown;
         this.maxTurn = maxTurn;
+        this.players = players;
         mainPlayer = players.get(mainPlayerOrder - 1);
 
         scoreboardPanel = new ScoreboardPanel(players, mainPlayerOrder, mainFrame);
@@ -170,6 +172,12 @@ public class GamePanel extends JPanel {
 
     public synchronized void cancelTimer() {
         timer.cancel();
+    }
+
+    public synchronized void switchToFinishGame(boolean isCompletedKeyword, String winner,
+                                                int numPlayers, List<Integer> listScore) {
+        // TODO: check that all arguments is consistent with the data at client
+        mainFrame.switchToFinishGame(winner, "keyword", players);
     }
 
 }
