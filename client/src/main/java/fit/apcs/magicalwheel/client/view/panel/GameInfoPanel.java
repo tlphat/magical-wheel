@@ -1,15 +1,12 @@
 package fit.apcs.magicalwheel.client.view.panel;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.io.Serial;
 
-import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -27,10 +24,10 @@ public class GameInfoPanel extends JPanel {
         hintLabel = new JLabel();
         hintLabel.setText("<html><p style=\"width:350px\">" + hint + "</p></html>");
         setNewKeyword(new String(new char[keywordLength]).replace('\0', '*'));
-        intLayout();
+        initLayout();
     }
 
-    private void intLayout() {
+    private void initLayout() {
         setOpaque(false);
         add(keywordPanel());
     }

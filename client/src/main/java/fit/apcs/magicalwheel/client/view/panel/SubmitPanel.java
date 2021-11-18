@@ -160,4 +160,5 @@ public class SubmitPanel extends JPanel {
     public void disableKeywordField() {
         keywordField.setEnabled(false);
     }
+
 }
