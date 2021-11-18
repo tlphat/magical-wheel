@@ -87,6 +87,7 @@ class Game:
             return ResponseData(response_content, None)
             
         self.keyword, self.hint = load_keyword_and_hint()
+        self.keyword = self.keyword.upper()
         self.origin_keyword = self.keyword
         self.guested_keyword = "*" * len(self.keyword)
         print("Game Start")
@@ -146,7 +147,7 @@ class Game:
 
     def receive_guest_handler(self, request_data):
         def create_response():
-            response_content = [EventType["PLAYER_GUEST"], current_player.username, guest_char, guest_keyword, self.guested_keyword, current_player.score, is_correct_keyword, 1 if current_player.eliminated() else 0]
+            response_content = [EventType["PLAYER_GUEST"], current_player.username, guest_char, guest_keyword, self.guested_keyword, current_player.score, is_correct_keyword, 1 if is_correct_keyword or not self.player_manager.has_next_player() else 0]
             return ResponseData(response_content, socket_id)
 
         content = request_data.content
@@ -156,6 +157,7 @@ class Game:
 
         if not self.state == GameState.START:
             return
+
         if not self.player_manager.is_current_turn_for_socket_id(socket_id):
             print("Incorrect player order")
             return
@@ -165,21 +167,27 @@ class Game:
         is_correct_keyword = 0
 
         if guest_char:
+            guest_char = guest_char.upper()
             num_correct_char = self.keyword.count(guest_char)
             if num_correct_char > 0:
                 current_player.update_score(1)
+                self.player_manager.set_next_player(current_player)
+
                 self.keyword = self.keyword.replace(guest_char, '')
                 for i in range(len(self.origin_keyword)):
                     if self.origin_keyword[i] == guest_char:
                         self.guested_keyword = self.guested_keyword[:i] + guest_char + self.guested_keyword[i + 1:]
 
         if guest_keyword:
+            guest_keyword = guest_keyword.upper()
             if guest_keyword == self.origin_keyword:
                 current_player.update_score(5)
                 is_correct_keyword = 1
                 self.is_guested_keyword = True
 
             current_player.eliminate()
+
+        self.is_pending_next_turn = True
 
         return self.publish_response(PUBLIC_RESPONSE, create_response())
 

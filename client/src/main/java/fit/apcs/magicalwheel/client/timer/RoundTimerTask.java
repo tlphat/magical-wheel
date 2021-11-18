@@ -30,7 +30,7 @@ public class RoundTimerTask extends TimerTask {
         SwingUtilities.invokeLater(() -> panel.setTime(time));
         if (time == 0) {
             panel.disableSubmitButton();
-            Client.getInstance().listenToStartTurnSignal(panel);
+            Client.getInstance().waitForGuessResponse(panel);
             timer.cancel();
         }
     }
