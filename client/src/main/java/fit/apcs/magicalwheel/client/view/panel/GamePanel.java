@@ -43,7 +43,7 @@ public class GamePanel extends JPanel {
         this.mainFrame = mainFrame;
         this.countdown = countdown;
         this.maxTurn = maxTurn;
-        this.messageLabel = messageLabel();
+        messageLabel = messageLabel();
         mainPlayer = players.get(mainPlayerOrder - 1);
 
         scoreboardPanel = new ScoreboardPanel(players, mainPlayerOrder, mainFrame);
@@ -55,9 +55,10 @@ public class GamePanel extends JPanel {
         initLayout();
         resetMessage();
         setTime((int) countdown);
-        // Client.getInstance().listenToStartTurnSignal(this);
+        Client.getInstance().listenToStartTurnSignal(this);
     }
 
+    @SuppressWarnings("MethodMayBeStatic")
     private JLabel messageLabel() {
         final var label = new JLabel();
         label.setForeground(Color.WHITE);
@@ -185,15 +186,15 @@ public class GamePanel extends JPanel {
         gameInfoPanel.setNewKeyword(keyword);
     }
 
-    public void updateMessage(String username, String character, String keyword) {
-        var message = "<" + username + "> ";
-        if (character == "") {
+    public synchronized void updateMessage(String username, String character, String keyword) {
+        var message = '<' + username + "> ";
+        if (character.isEmpty()) {
             message += "time out";
         }
         else {
-            message += "guess character '" + character + "'";
-            if (keyword != "") {
-                message += "and keyword '" + keyword + "'";
+            message += "guess character '" + character + '\'';
+            if (!keyword.isEmpty()) {
+                message += "and keyword '" + keyword + '\'';
             }
         }
         messageLabel.setText(message);
