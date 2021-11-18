@@ -219,9 +219,39 @@ public class GamePanel extends JPanel {
     }
 
     public synchronized void switchToFinishGame(boolean isCompletedKeyword, String winner,
-                                                int numPlayers, List<Integer> listScore) {
-        // TODO: check that all arguments is consistent with the data at client
-        mainFrame.switchToFinishGame(winner, "keyword", players);
+                                                String keyword, int numPlayers, List<Integer> listScore) {
+        verifyIfKeywordHasBeenGuessed(isCompletedKeyword);
+        verifyWinnerUsernameIsValid(winner);
+        verifyNumPlayers(numPlayers);
+        verifyPlayersScore(listScore);
+        mainFrame.switchToFinishGame(winner, keyword, players);
+    }
+
+    private void verifyIfKeywordHasBeenGuessed(boolean isCompletedKeyword) {
+        if (isCompletedKeyword != isKeywordGuessed) {
+            throw new IllegalStateException("Conflict in whether the keyword has been guessed");
+        }
+    }
+
+    private void verifyWinnerUsernameIsValid(String winner) {
+        if (!winner.isEmpty()
+            && players.stream().noneMatch(player -> player.getUsername().equals(winner))) {
+            throw new IllegalStateException("Winner username not found");
+        }
+    }
+
+    private void verifyNumPlayers(int numPlayers) {
+        if (players.size() != numPlayers) {
+            throw new IllegalStateException("Number of players is not correct");
+        }
+    }
+
+    private void verifyPlayersScore(List<Integer> listScore) {
+        for (var index = 0; index < players.size(); ++index) {
+            if (players.get(index).getPoint() != listScore.get(index)) {
+                throw new IllegalStateException("There is something wrong with end game score");
+            }
+        }
     }
 
 }

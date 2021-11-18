@@ -39,13 +39,14 @@ public class EndGameHandler implements CompletionHandler<Integer, Void> {
             validateEventType(reader);
             final var isCompletedKeyword = Integer.parseInt(reader.readLine()) != 0;
             final var winner = reader.readLine();
+            final var keyword = reader.readLine();
             final var numPlayers = Integer.parseInt(reader.readLine());
             final var listScore = new ArrayList<Integer>();
             for (var order = 1; order <= numPlayers; ++order) {
                 listScore.add(Integer.parseInt(reader.readLine()));
             }
             SwingUtilities.invokeLater(
-                    () -> panel.switchToFinishGame(isCompletedKeyword, winner, numPlayers, listScore));
+                    () -> panel.switchToFinishGame(isCompletedKeyword, winner, keyword, numPlayers, listScore));
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Error in parsing response", ex);
         }
