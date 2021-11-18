@@ -12,6 +12,7 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import fit.apcs.magicalwheel.client.connection.handler.EndGameHandler;
 import fit.apcs.magicalwheel.client.connection.handler.GuessResponseHandler;
 import fit.apcs.magicalwheel.client.connection.handler.JoinGameHandler;
 import fit.apcs.magicalwheel.client.connection.handler.StartGameHandler;
@@ -109,6 +110,12 @@ public final class Client {
     public void waitForGuessResponse(GamePanel panel) {
         final var byteBuffer = ByteBuffer.allocate(1000);
         final var responseHandler = new GuessResponseHandler(byteBuffer, panel, channel);
+        channel.read(byteBuffer, null, responseHandler);
+    }
+
+    public void listenToEndGameSignal(GamePanel panel) {
+        final var byteBuffer = ByteBuffer.allocate(1000);
+        final var responseHandler = new EndGameHandler(byteBuffer, panel, channel);
         channel.read(byteBuffer, null, responseHandler);
     }
 

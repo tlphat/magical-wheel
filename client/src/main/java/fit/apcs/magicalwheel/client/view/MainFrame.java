@@ -54,6 +54,12 @@ public class MainFrame extends JFrame {
         refresh();
     }
 
+    public synchronized void switchToFinishGame(String winner, String keyword, List<Player> listPlayers) {
+        final var finishPanel = new FinishPanel(winner, keyword, listPlayers, this);
+        setContentPane(finishPanel);
+        refresh();
+    }
+
     public synchronized void refresh() {
         repaint();
         revalidate();

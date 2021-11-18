@@ -99,6 +99,7 @@ public class FinishPanel extends JPanel {
         final var gbc = new GridBagConstraints();
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         panel.setOpaque(false);
+        // FIXME: If winner.isEmpty(), choose the player with highest score
         panel.add(textPanel("Winner: ", winner), gbc);
         panel.add(textPanel("Keyword: ", keyword), gbc);
         return panel;

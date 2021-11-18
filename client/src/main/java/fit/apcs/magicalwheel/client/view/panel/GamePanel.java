@@ -34,6 +34,7 @@ public class GamePanel extends JPanel {
     private final JLabel turnLabel;
     private final double countdown;
     private final int maxTurn;
+    private final transient List<Player> players;
     private final transient Player mainPlayer;
     private boolean isKeywordGuessed = false;
     private transient Timer timer = new Timer();
@@ -43,6 +44,7 @@ public class GamePanel extends JPanel {
         this.mainFrame = mainFrame;
         this.countdown = countdown;
         this.maxTurn = maxTurn;
+        this.players = players;
         messageLabel = messageLabel();
         mainPlayer = players.get(mainPlayerOrder - 1);
 
@@ -214,6 +216,42 @@ public class GamePanel extends JPanel {
 
     public synchronized void cancelTimer() {
         timer.cancel();
+    }
+
+    public synchronized void switchToFinishGame(boolean isCompletedKeyword, String winner,
+                                                String keyword, int numPlayers, List<Integer> listScore) {
+        verifyIfKeywordHasBeenGuessed(isCompletedKeyword);
+        verifyWinnerUsernameIsValid(winner);
+        verifyNumPlayers(numPlayers);
+        verifyPlayersScore(listScore);
+        mainFrame.switchToFinishGame(winner, keyword, players);
+    }
+
+    private void verifyIfKeywordHasBeenGuessed(boolean isCompletedKeyword) {
+        if (isCompletedKeyword != isKeywordGuessed) {
+            throw new IllegalStateException("Conflict in whether the keyword has been guessed");
+        }
+    }
+
+    private void verifyWinnerUsernameIsValid(String winner) {
+        if (!winner.isEmpty()
+            && players.stream().noneMatch(player -> player.getUsername().equals(winner))) {
+            throw new IllegalStateException("Winner username not found");
+        }
+    }
+
+    private void verifyNumPlayers(int numPlayers) {
+        if (players.size() != numPlayers) {
+            throw new IllegalStateException("Number of players is not correct");
+        }
+    }
+
+    private void verifyPlayersScore(List<Integer> listScore) {
+        for (var index = 0; index < players.size(); ++index) {
+            if (players.get(index).getPoint() != listScore.get(index)) {
+                throw new IllegalStateException("There is something wrong with end game score");
+            }
+        }
     }
 
 }
