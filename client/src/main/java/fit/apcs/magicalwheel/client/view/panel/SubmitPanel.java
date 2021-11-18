@@ -1,7 +1,7 @@
 package fit.apcs.magicalwheel.client.view.panel;
 
 import java.awt.Color;
-import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nullable;
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -94,12 +93,13 @@ public class SubmitPanel extends JPanel {
     private JPanel keywordPanel() {
         final var panel = new JPanel(new GridBagLayout());
         final var gbc = new GridBagConstraints();
-        final var label = new JLabel("Keyword guess (optional): ");
-        keywordField.setColumns(10);
+        final var label = new JLabel("Keyword (optional): ");
+        keywordFieldDecor();
         submitButton.setText("Submit");
         submitButton.addActionListener(event -> onSubmitButtonListener());
         label.setForeground(Color.WHITE);
-        gbc.insets = new Insets(10, 10, 0, 0);
+        label.setFont(new Font("Calibri", Font.PLAIN, 15));
+        gbc.insets = new Insets(10, 10, 10, 10);
         gbc.anchor = GridBagConstraints.LINE_START;
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -107,11 +107,21 @@ public class SubmitPanel extends JPanel {
         gbc.gridx = 1;
         gbc.gridy = 0;
         panel.add(keywordField, gbc);
-        gbc.gridx = 1;
+        gbc.gridx = 0;
         gbc.gridy = 1;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.anchor = GridBagConstraints.NORTH;
         panel.add(submitButton, gbc);
         panel.setOpaque(false);
         return panel;
+    }
+
+    private void keywordFieldDecor() {
+        keywordField.setColumns(10);
+        keywordField.setBackground(Color.BLACK);
+        keywordField.setForeground(Color.WHITE);
+        keywordField.setCaretColor(Color.WHITE);
+        keywordField.setFont(new Font("Calibri", Font.PLAIN, 15));
     }
 
     private void onSubmitButtonListener() {

@@ -3,6 +3,7 @@ package fit.apcs.magicalwheel.client.view.panel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -25,6 +26,7 @@ public class GamePanel extends JPanel {
     private static final long serialVersionUID = -13480572595592699L;
 
     private final MainFrame mainFrame;
+    private final JLabel messageLabel;
     private final ScoreboardPanel scoreboardPanel;
     private final GameInfoPanel gameInfoPanel;
     private final SubmitPanel submitPanel;
@@ -41,6 +43,7 @@ public class GamePanel extends JPanel {
         this.mainFrame = mainFrame;
         this.countdown = countdown;
         this.maxTurn = maxTurn;
+        this.messageLabel = messageLabel();
         mainPlayer = players.get(mainPlayerOrder - 1);
 
         scoreboardPanel = new ScoreboardPanel(players, mainPlayerOrder, mainFrame);
@@ -50,8 +53,20 @@ public class GamePanel extends JPanel {
         turnLabel = new JLabel();
 
         initLayout();
+        resetMessage();
         setTime((int) countdown);
-        Client.getInstance().listenToStartTurnSignal(this);
+        // Client.getInstance().listenToStartTurnSignal(this);
+    }
+
+    private JLabel messageLabel() {
+        final var label = new JLabel();
+        label.setForeground(Color.WHITE);
+        label.setFont(new Font("Calibri", Font.ITALIC, 18));
+        return label;
+    }
+
+    private void resetMessage() {
+        messageLabel.setText("There's not any character guess for this keyword.");
     }
 
     private void initLayout() {
@@ -96,9 +111,23 @@ public class GamePanel extends JPanel {
         gbc.insets = new Insets(50, 10, 10, 10);
         mainGamePanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
         mainGamePanel.setOpaque(false);
+        mainGamePanel.add(messagePanel(), gbc);
         mainGamePanel.add(gameInfoPanel, gbc);
         mainGamePanel.add(submitPanel, gbc);
         return mainGamePanel;
+    }
+
+    private JPanel messagePanel() {
+        final var panel = new JPanel(new GridBagLayout());
+        final var gbc = new GridBagConstraints();
+        final var line = new JLabel("_________________________________________________________");
+        line.setFont(new Font("Calibri", Font.ITALIC, 15));
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        line.setForeground(Color.WHITE);
+        panel.setOpaque(false);
+        panel.add(messageLabel, gbc);
+        panel.add(line, gbc);
+        return panel;
     }
 
     public synchronized void setTime(int timeInSec) {
@@ -154,6 +183,20 @@ public class GamePanel extends JPanel {
 
     public void updateKeyword(String keyword) {
         gameInfoPanel.setNewKeyword(keyword);
+    }
+
+    public void updateMessage(String username, String character, String keyword) {
+        var message = "<" + username + "> ";
+        if (character == "") {
+            message += "time out";
+        }
+        else {
+            message += "guess character '" + character + "'";
+            if (keyword != "") {
+                message += "and keyword '" + keyword + "'";
+            }
+        }
+        messageLabel.setText(message);
     }
 
     public synchronized void keywordGotGuessed() {
