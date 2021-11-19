@@ -161,7 +161,7 @@ public class GamePanel extends JPanel {
         scoreboardPanel.setCurrentPlayer(username);
         if (username.equals(mainPlayer.getUsername())) {
             submitPanel.disableSubmission(true);
-            if (turn < 2) {
+            if (turn <= 2) {
                 submitPanel.disableKeywordField();
             }
             startTimer();
