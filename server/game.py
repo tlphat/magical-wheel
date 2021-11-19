@@ -22,6 +22,7 @@ class Game:
         self.guested_keyword = None
         self.is_pending_next_turn = False
         self.is_guested_keyword = False
+        self.is_pending_response = False
 
     def run(self):
         while not self.state == GameState.END:
@@ -50,6 +51,10 @@ class Game:
         elapsedTime = self.getElapsedTime()
 
         if elapsedTime >= TIME_PER_TURN or self.is_pending_next_turn:
+            if self.is_pending_response:
+                self.is_pending_response = False
+                self.send_dummy_response()
+                return
             self.next_turn()
             return
 
@@ -77,6 +82,7 @@ class Game:
         self.publish_response(PUBLIC_RESPONSE, create_response())
 
         self.is_pending_next_turn = False
+        self.is_pending_response = True
         self.start_turn_time = time.time()
 
     def start_game(self):
@@ -188,10 +194,19 @@ class Game:
             current_player.eliminate()
 
         self.is_pending_next_turn = True
+        self.is_pending_response = False
 
         return self.publish_response(PUBLIC_RESPONSE, create_response())
 
         
+    def send_dummy_response(self):
+        def create_response():
+            current_player = self.player_manager.cur_player
+            response_content = [EventType["PLAYER_GUEST"], current_player.username, '', '', self.guested_keyword, current_player.score, 0, 1 if not self.player_manager.has_next_player() else 0]
+            return ResponseData(response_content, None)
+            
+        return self.publish_response(PUBLIC_RESPONSE, create_response())
+
     def publish_response(self, send_type, response_data):
         self.event_manager.push_response(Response(send_type, response_data))
 
