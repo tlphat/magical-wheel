@@ -9,7 +9,6 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.io.Serial;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -31,7 +30,8 @@ public class FinishPanel extends JPanel {
     private final List<PlayerPanel> playerPanels;
     private final MainFrame mainFrame;
 
-    public FinishPanel(String winner, String keyword, List<Player> players, MainFrame mainFrame, Player mainPlayer) {
+    public FinishPanel(String winner, String keyword, List<Player> players,
+                       MainFrame mainFrame, Player mainPlayer) {
         this.winner = winner;
         this.keyword = keyword;
         this.mainFrame = mainFrame;
@@ -68,16 +68,18 @@ public class FinishPanel extends JPanel {
         return panel;
     }
 
-    @SuppressWarnings("MethodMayBeStatic")
     private JButton returnButton() {
         final var button = new JButton("Return");
         button.setOpaque(false);
         button.setForeground(Color.YELLOW);
         button.setBackground(Color.BLACK);
         button.setFocusPainted(false);
-        //TODO: switch to welcome panel
-        //button.addActionListener(e -> );
+        button.addActionListener(event -> onReturnButtonClick());
         return button;
+    }
+
+    private void onReturnButtonClick() {
+        mainFrame.switchToWelcomePanel();
     }
 
     private JPanel contentPanel() {
@@ -108,7 +110,7 @@ public class FinishPanel extends JPanel {
     private JPanel gameResult() {
         final var panel = new JPanel(new GridBagLayout());
         final var gbc = new GridBagConstraints();
-        String winMessage;
+        final String winMessage;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         panel.setOpaque(false);
         if (winner.isEmpty()) {

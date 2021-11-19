@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.Serial;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -34,10 +33,10 @@ public class MainFrame extends JFrame {
         setVisible(true);
     }
 
-    @SuppressWarnings("unused")
-    private void switchToFinishPanel(String winner, String keyword, List<Player> players, Player mainPlayer) {
-        final var finishPanel = new FinishPanel(winner, keyword, players, this, mainPlayer);
-        setContentPane(finishPanel);
+    public void switchToWelcomePanel() {
+        Client.getInstance().closeConnection();
+        final var welcomePanel = new WelcomePanel(this);
+        setContentPane(welcomePanel);
         refresh();
     }
 
@@ -55,7 +54,8 @@ public class MainFrame extends JFrame {
         refresh();
     }
 
-    public synchronized void switchToFinishGame(String winner, String keyword, List<Player> listPlayers, Player mainPlayer) {
+    public synchronized void switchToFinishGame(String winner, String keyword,
+                                                List<Player> listPlayers, Player mainPlayer) {
         final var finishPanel = new FinishPanel(winner, keyword, listPlayers, this, mainPlayer);
         setContentPane(finishPanel);
         refresh();
