@@ -25,6 +25,8 @@ class NetworkManager:
 
         self.socket_counter += 1
         self.socket_to_id[sock] = self.socket_counter
+        self.alive_sockets.append(sock)
+        self.message_queues[sock] = queue.Queue()
         return self.socket_counter
 
     def accept_socket(self, sock):
@@ -35,8 +37,6 @@ class NetworkManager:
             return False
 
         self.accepted_sockets.append(sock)
-        self.alive_sockets.append(sock)
-        self.message_queues[sock] = queue.Queue()
 
         return True
 
