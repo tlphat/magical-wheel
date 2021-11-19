@@ -7,6 +7,6 @@ SERVER_TICK = 0.25
 
 # Game Configuration
 NUM_PLAYER = 2 # Number of player (<= 10)
-TURN_PER_PLAYER = 5 # Number of turn per player
+NUM_ROUND = 5 # Number of turn per player
 WAITING_TIME_TO_START = 3 # Countdown to start the first turn
 TIME_PER_TURN = 10.75 # Time per turn in client + 0.75

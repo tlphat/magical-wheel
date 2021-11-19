@@ -15,7 +15,8 @@ class Game:
         self.player_manager = PlayerManager(self)
         self.state = GameState.WAITING
         self.start_turn_time = None
-        self.turn = -1
+        self.turn = 0
+        self.round = 1
         self.keyword = None
         self.origin_keyword = None
         self.hint = None
@@ -42,39 +43,42 @@ class Game:
 
     def update_logic(self):
         if self.state == GameState.PRE_START:
-            if self.getElapsedTime() >= WAITING_TIME_TO_START:
+            if self.get_elapsed_time() >= WAITING_TIME_TO_START:
                 self.state = GameState.START
                 self.next_turn()
-                return
+            return
 
 
-        elapsedTime = self.getElapsedTime()
+        
+        elapsed_time = self.get_elapsed_time()
 
-        if elapsedTime >= TIME_PER_TURN or self.is_pending_next_turn:
+        if elapsed_time >= TIME_PER_TURN or self.is_pending_next_turn:
             if self.is_pending_response:
                 self.is_pending_response = False
                 self.send_dummy_response()
                 return
-            self.next_turn()
+
+            if self.is_end_game():
+                self.end_game()
+            else:
+                self.next_turn()
             return
+
 
     def next_turn(self):
         def create_response():
-            response_content = [EventType["START_TURN"], next_player.username, TURN_PER_PLAYER - next_player.remaining_turn]
+            response_content = [EventType["START_TURN"], next_player.username, self.round]
             return ResponseData(response_content, next_player.socket_id)
         
-        if self.is_guested_keyword:
-            self.end_game()
-            return
-
         next_player = self.player_manager.get_next_player()
-        if next_player is None or self.origin_keyword == self.guested_keyword:
-            self.end_game()
-            return
-        
-        next_player.take_turn()
-        self.turn += 1
-        print("Turn: ", self.turn)
+
+        if (self.turn == NUM_PLAYER):
+            self.round += 1
+            self.turn = 1
+        else:
+            self.turn += 1
+
+        print("Round {} Turn: {}".format(self.round, self.turn))
         print("Keyword: ", self.origin_keyword)
         print("Guested: ", self.guested_keyword)
         print("Player: ", next_player.username)
@@ -87,7 +91,7 @@ class Game:
 
     def start_game(self):
         def create_response():
-            response_content = [EventType["START_GAME"], len(self.keyword), self.hint, TIME_PER_TURN - 0.75, TURN_PER_PLAYER]
+            response_content = [EventType["START_GAME"], len(self.keyword), self.hint, TIME_PER_TURN - 0.75, NUM_ROUND]
             self.player_manager.wrap_to_response(response_content)
             
             return ResponseData(response_content, None)
@@ -153,7 +157,7 @@ class Game:
 
     def receive_guest_handler(self, request_data):
         def create_response():
-            response_content = [EventType["PLAYER_GUEST"], current_player.username, guest_char, guest_keyword, self.guested_keyword, current_player.score, is_correct_keyword, 1 if is_correct_keyword or not self.player_manager.has_next_player() else 0]
+            response_content = [EventType["PLAYER_GUEST"], current_player.username, guest_char, guest_keyword, self.guested_keyword, current_player.score, is_correct_keyword, 1 if self.is_end_game() else 0]
             return ResponseData(response_content, socket_id)
 
         content = request_data.content
@@ -178,13 +182,15 @@ class Game:
             if num_correct_char > 0:
                 current_player.update_score(1)
                 self.player_manager.set_next_player(current_player)
+                self.round += 1
+                self.turn = 0
 
                 self.keyword = self.keyword.replace(guest_char, '')
                 for i in range(len(self.origin_keyword)):
                     if self.origin_keyword[i] == guest_char:
                         self.guested_keyword = self.guested_keyword[:i] + guest_char + self.guested_keyword[i + 1:]
 
-        if guest_keyword:
+        if guest_keyword and (self.round > 1 or self.turn > 1):
             guest_keyword = guest_keyword.upper()
             if guest_keyword == self.origin_keyword:
                 current_player.update_score(5)
@@ -202,7 +208,7 @@ class Game:
     def send_dummy_response(self):
         def create_response():
             current_player = self.player_manager.cur_player
-            response_content = [EventType["PLAYER_GUEST"], current_player.username, '', '', self.guested_keyword, current_player.score, 0, 1 if not self.player_manager.has_next_player() else 0]
+            response_content = [EventType["PLAYER_GUEST"], current_player.username, '', '', self.guested_keyword, current_player.score, 0, 1 if self.is_end_game() else 0]
             return ResponseData(response_content, None)
             
         return self.publish_response(PUBLIC_RESPONSE, create_response())
@@ -210,8 +216,11 @@ class Game:
     def publish_response(self, send_type, response_data):
         self.event_manager.push_response(Response(send_type, response_data))
 
-    def getElapsedTime(self):
+    def get_elapsed_time(self):
         return time.time() - self.start_turn_time
 
+    def is_end_game(self):
+        return self.is_guested_keyword or self.round > NUM_ROUND or (self.turn == NUM_PLAYER and self.round + 1 > NUM_ROUND) or not self.player_manager.has_next_player()
+    
     def ended(self):
         return self.state == GameState.END
