@@ -109,7 +109,7 @@ class Game:
         def create_response():
             is_complete_keyword = 1 if self.is_guested_keyword else 0
             correct_guest_username = self.player_manager.cur_player.username if is_complete_keyword else ""
-            response_content = [EventType["END_GAME"], is_complete_keyword, correct_guest_username]
+            response_content = [EventType["END_GAME"], is_complete_keyword, correct_guest_username, self.origin_keyword]
             self.player_manager.wrap_score_to_response(response_content)
             return ResponseData(response_content, None)
 
