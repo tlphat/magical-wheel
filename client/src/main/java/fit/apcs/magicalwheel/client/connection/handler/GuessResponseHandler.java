@@ -45,6 +45,7 @@ public class GuessResponseHandler implements CompletionHandler<Integer, Void> {
             final var score = Integer.parseInt(reader.readLine());
             final var isCorrectKeyWord = Integer.parseInt(reader.readLine()) != 0;
             final var isEnd = Integer.parseInt(reader.readLine()) != 0;
+            stopTimer();
             updateMessage(username, guessChar, guessKeyword);
             updateScoreAndKeyword(username, keyword, score);
             handleGuessKeywordSignal(username, guessKeyword, isCorrectKeyWord);
@@ -52,6 +53,10 @@ public class GuessResponseHandler implements CompletionHandler<Integer, Void> {
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Error in parsing response", ex);
         }
+    }
+
+    private void stopTimer() {
+        SwingUtilities.invokeLater(panel::cancelTimer);
     }
 
     private void directToEndGameOrNewTurn(boolean isEnd) {

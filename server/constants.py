@@ -13,10 +13,10 @@ PUBLIC_RESPONSE = 'public'
 
 EventType = {
         'JOIN_GAME': 1,
-        'START_GAME': 3,
-        'START_TURN': 5,
+        'START_GAME': 2,
+        'START_TURN': 3,
         'PLAYER_GUEST': 4,
-        'END_GAME': 6,
+        'END_GAME': 5,
         }
 StatusCode = {
         'SUCCESS': 0,

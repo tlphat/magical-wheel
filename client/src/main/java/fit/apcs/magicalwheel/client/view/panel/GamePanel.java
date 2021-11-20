@@ -156,26 +156,30 @@ public class GamePanel extends JPanel {
     }
 
     public synchronized void startTurn(String username, int turn) {
-        setTurn(turn);
-        setTime((int) countdown);
-        scoreboardPanel.setCurrentPlayer(username);
         if (username.equals(mainPlayer.getUsername())) {
             submitPanel.disableSubmission(true);
-            if (turn < 2) {
+            if (turn <= 2) {
                 submitPanel.disableKeywordField();
             }
-            startTimer();
         } else {
             submitPanel.disableSubmission(false);
-            Client.getInstance().waitForGuessResponse(this);
         }
+        prepareForTurn(username, turn);
+    }
+
+    private void prepareForTurn(String username, int turn) {
+        setTurn(turn);
+        setTime((int) countdown);
+        startTimer();
+        Client.getInstance().waitForGuessResponse(this);
+        scoreboardPanel.setCurrentPlayer(username);
         mainFrame.refresh();
     }
 
     private void startTimer() {
         timer = new Timer();
         final var timerTask = new RoundTimerTask((int) countdown, this, timer);
-        final var delay = 0; // no delay
+        final var delay = 1000; // in ms
         final var timeToNextTask = 1000; // in ms
         timer.scheduleAtFixedRate(timerTask, delay, timeToNextTask);
     }
