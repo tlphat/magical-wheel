@@ -130,7 +130,7 @@ public class SubmitPanel extends JPanel {
         }
         final String character = curChoice.getText();
         final String keyword = keywordField.getText();
-        Client.getInstance().submitGuess(gamePanel, character, keyword);
+        Client.getInstance().submitGuess(character, keyword);
         disableSubmission(false);
         gamePanel.cancelTimer();
         mainFrame.refresh();

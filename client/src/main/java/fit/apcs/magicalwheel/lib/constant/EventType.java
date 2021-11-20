@@ -14,15 +14,13 @@ import javax.annotation.Nullable;
  *     <li>checked by the receiver upon receiving the message</li>
  * </ul>
  */
-// TODO: Fix event type number
 public enum EventType {
 
     JOIN_ROOM("1"),
-    NEW_PLAYER("2"),
-    START_GAME("3"),
+    START_GAME("2"),
+    START_TURN("3"),
     PLAYER_GUESS("4"),
-    START_TURN("5"),
-    END_GAME("6");
+    END_GAME("5");
 
     private static final Logger LOGGER = Logger.getLogger(EventType.class.getName());
     private final String value;
