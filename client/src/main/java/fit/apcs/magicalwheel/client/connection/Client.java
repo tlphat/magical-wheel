@@ -1,5 +1,7 @@
 package fit.apcs.magicalwheel.client.connection;
 
+import static fit.apcs.magicalwheel.lib.constant.EventType.PLAYER_GUESS;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -10,8 +12,12 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import fit.apcs.magicalwheel.client.connection.handler.EndGameHandler;
+import fit.apcs.magicalwheel.client.connection.handler.GuessResponseHandler;
 import fit.apcs.magicalwheel.client.connection.handler.JoinGameHandler;
 import fit.apcs.magicalwheel.client.connection.handler.StartGameHandler;
+import fit.apcs.magicalwheel.client.connection.handler.StartTurnHandler;
+import fit.apcs.magicalwheel.client.view.panel.GamePanel;
 import fit.apcs.magicalwheel.client.view.panel.WaitingPanel;
 import fit.apcs.magicalwheel.client.view.panel.WelcomePanel;
 import fit.apcs.magicalwheel.lib.constant.EventType;
@@ -86,6 +92,29 @@ public final class Client {
     public void waitForStartGameSignal(WaitingPanel panel) {
         final var byteBuffer = ByteBuffer.allocate(2000);
         final var responseHandler = new StartGameHandler(byteBuffer, panel, channel);
+        channel.read(byteBuffer, null, responseHandler);
+    }
+
+    public void listenToStartTurnSignal(GamePanel panel) {
+        final var byteBuffer = ByteBuffer.allocate(1000);
+        final var responseHandler = new StartTurnHandler(byteBuffer, panel, channel);
+        channel.read(byteBuffer, null, responseHandler);
+    }
+
+    public void submitGuess(String guessChar, String keyword) {
+        final var message = SocketWriteUtil.getMessageFromLines(PLAYER_GUESS, guessChar, keyword);
+        SocketWriteUtil.writeStringToChannel(channel, message);
+    }
+
+    public void waitForGuessResponse(GamePanel panel) {
+        final var byteBuffer = ByteBuffer.allocate(1000);
+        final var responseHandler = new GuessResponseHandler(byteBuffer, panel, channel);
+        channel.read(byteBuffer, null, responseHandler);
+    }
+
+    public void listenToEndGameSignal(GamePanel panel) {
+        final var byteBuffer = ByteBuffer.allocate(1000);
+        final var responseHandler = new EndGameHandler(byteBuffer, panel, channel);
         channel.read(byteBuffer, null, responseHandler);
     }
 

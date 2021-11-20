@@ -6,6 +6,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -14,6 +15,7 @@ import javax.swing.SwingUtilities;
 import fit.apcs.magicalwheel.client.model.Player;
 import fit.apcs.magicalwheel.client.view.panel.WaitingPanel;
 import fit.apcs.magicalwheel.lib.constant.EventType;
+import fit.apcs.magicalwheel.lib.constant.StatusCode;
 import fit.apcs.magicalwheel.lib.util.SocketReadUtil;
 
 public class StartGameHandler implements CompletionHandler<Integer, Void> {
@@ -38,8 +40,8 @@ public class StartGameHandler implements CompletionHandler<Integer, Void> {
             final var type = validateEventType(reader);
             switch (type) {
                 case START_GAME -> handleStartGameSignal(reader, panel);
-                case NEW_PLAYER -> handleNewPlayerSignal(reader, panel);
-                default -> clearAndReadBuffer(byteBuffer);
+                case JOIN_ROOM -> handleJoinGameSignal(reader, panel);
+                default -> clearAndReadBuffer();
             }
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Error in parsing response", ex);
@@ -57,22 +59,45 @@ public class StartGameHandler implements CompletionHandler<Integer, Void> {
     private static void handleStartGameSignal(BufferedReader reader, WaitingPanel panel) throws IOException {
         final var keywordLength = Integer.parseInt(reader.readLine());
         final var hint = reader.readLine();
+        final var countdown = Double.parseDouble(reader.readLine());
+        final var maxTurn = Integer.parseInt(reader.readLine());
+        final var players = readListPlayers(reader);
+        SwingUtilities.invokeLater(() -> panel.startGame(keywordLength, hint, countdown, maxTurn, players));
+    }
+
+    private void handleJoinGameSignal(BufferedReader reader, WaitingPanel panel) throws IOException {
+        if (!statusIsOK(reader)) {
+            return;
+        }
+        verifyMaxNumPlayersLineExist(reader);
+        final var listPlayers = readListPlayers(reader);
+        SwingUtilities.invokeLater(() -> panel.updateListPlayers(listPlayers));
+        clearAndReadBuffer();
+    }
+
+    private static boolean statusIsOK(BufferedReader reader) throws IOException {
+        final var statusCode = StatusCode.fromString(reader.readLine());
+        return statusCode == StatusCode.OK;
+    }
+
+    private static void verifyMaxNumPlayersLineExist(BufferedReader reader) throws IOException {
+        final var line = reader.readLine();
+        if (line == null) {
+            throw new IllegalArgumentException("The message format is not correct");
+        }
+    }
+
+    private static List<Player> readListPlayers(BufferedReader reader) throws IOException {
         final var numPlayers = Integer.parseInt(reader.readLine());
         final var players = new ArrayList<Player>();
         for (var order = 1; order <= numPlayers; ++order) {
             final var username = reader.readLine().trim();
             players.add(new Player(order, username));
         }
-        SwingUtilities.invokeLater(() -> panel.startGame(keywordLength, hint, players));
+        return players;
     }
 
-    private void handleNewPlayerSignal(BufferedReader reader, WaitingPanel panel) throws IOException {
-        final var newPlayerUsername = reader.readLine().trim();
-        SwingUtilities.invokeLater(() -> panel.addNewPlayerToRoom(newPlayerUsername));
-        clearAndReadBuffer(byteBuffer);
-    }
-
-    private void clearAndReadBuffer(ByteBuffer byteBuffer) {
+    private void clearAndReadBuffer() {
         byteBuffer.clear();
         channel.read(byteBuffer, null, this);
     }

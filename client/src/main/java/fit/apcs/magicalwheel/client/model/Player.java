@@ -4,7 +4,8 @@ public class Player {
 
     private final String username;
     private final int order;
-    private final int point;
+    private int point;
+    private boolean active = true;
 
     public Player(int order, String username) {
         this.order = order;
@@ -24,6 +25,10 @@ public class Player {
         return point;
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
     @Override
     public int hashCode() {
         return username.hashCode();
@@ -38,6 +43,14 @@ public class Player {
             return true;
         }
         return obj instanceof Player && ((Player) obj).username.equals(username);
+    }
+
+    public void setPoint(int score) {
+        point = score;
+    }
+
+    public void eliminate() {
+        active = false;
     }
 
 }

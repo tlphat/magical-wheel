@@ -33,10 +33,10 @@ public class MainFrame extends JFrame {
         setVisible(true);
     }
 
-    @SuppressWarnings("unused")
-    private void switchToFinishPanel(String winner, String keyword, List<Player> players) {
-        final var finishPanel = new FinishPanel(winner, keyword, players);
-        setContentPane(finishPanel);
+    public void switchToWelcomePanel() {
+        Client.getInstance().closeConnection();
+        final var welcomePanel = new WelcomePanel(this);
+        setContentPane(welcomePanel);
         refresh();
     }
 
@@ -46,10 +46,18 @@ public class MainFrame extends JFrame {
         refresh();
     }
 
-    public synchronized void switchToGamePanel(int keywordLength, String hint,
+    public synchronized void switchToGamePanel(int keywordLength, String hint, double countdown, int maxTurn,
                                                List<Player> players, int curPlayerOrder) {
-        final var gamePanel = new GamePanel(keywordLength, hint, players, curPlayerOrder);
+        final var gamePanel = new GamePanel(keywordLength, hint, countdown,
+                                            maxTurn, players, curPlayerOrder, this);
         setContentPane(gamePanel);
+        refresh();
+    }
+
+    public synchronized void switchToFinishGame(String winner, String keyword,
+                                                List<Player> listPlayers, Player mainPlayer) {
+        final var finishPanel = new FinishPanel(winner, keyword, listPlayers, this, mainPlayer);
+        setContentPane(finishPanel);
         refresh();
     }
 
