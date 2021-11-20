@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.SwingUtilities;
-
 import fit.apcs.magicalwheel.client.model.Player;
 import fit.apcs.magicalwheel.client.view.panel.WaitingPanel;
 import fit.apcs.magicalwheel.lib.constant.EventType;
@@ -62,7 +60,7 @@ public class StartGameHandler implements CompletionHandler<Integer, Void> {
         final var countdown = Double.parseDouble(reader.readLine());
         final var maxTurn = Integer.parseInt(reader.readLine());
         final var players = readListPlayers(reader);
-        SwingUtilities.invokeLater(() -> panel.startGame(keywordLength, hint, countdown, maxTurn, players));
+        panel.startGame(keywordLength, hint, countdown, maxTurn, players);
     }
 
     private void handleJoinGameSignal(BufferedReader reader, WaitingPanel panel) throws IOException {
@@ -71,7 +69,7 @@ public class StartGameHandler implements CompletionHandler<Integer, Void> {
         }
         verifyMaxNumPlayersLineExist(reader);
         final var listPlayers = readListPlayers(reader);
-        SwingUtilities.invokeLater(() -> panel.updateListPlayers(listPlayers));
+        panel.updateListPlayers(listPlayers);
         clearAndReadBuffer();
     }
 

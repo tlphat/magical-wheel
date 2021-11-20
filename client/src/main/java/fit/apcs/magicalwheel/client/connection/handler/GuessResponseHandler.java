@@ -10,8 +10,6 @@ import java.nio.channels.CompletionHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.SwingUtilities;
-
 import fit.apcs.magicalwheel.client.connection.Client;
 import fit.apcs.magicalwheel.client.view.panel.GamePanel;
 import fit.apcs.magicalwheel.lib.constant.EventType;
@@ -56,7 +54,7 @@ public class GuessResponseHandler implements CompletionHandler<Integer, Void> {
     }
 
     private void stopTimer() {
-        SwingUtilities.invokeLater(panel::cancelTimer);
+        panel.cancelTimer();
     }
 
     private void directToEndGameOrNewTurn(boolean isEnd) {
@@ -68,20 +66,20 @@ public class GuessResponseHandler implements CompletionHandler<Integer, Void> {
     }
 
     private void updateMessage(String username, String guessChar, String guessKeyword) {
-        SwingUtilities.invokeLater(() -> panel.updateMessage(username, guessChar, guessKeyword));
+        panel.updateMessage(username, guessChar, guessKeyword);
     }
 
     private void updateScoreAndKeyword(String username, String keyword, int score) {
-        SwingUtilities.invokeLater(() -> panel.updateScore(username, score));
-        SwingUtilities.invokeLater(() -> panel.updateKeyword(keyword));
+        panel.updateScore(username, score);
+        panel.updateKeyword(keyword);
     }
 
     private void handleGuessKeywordSignal(String username, String guessKeyword, boolean isCorrectKeyWord) {
         if (!guessKeyword.isEmpty()) {
             if (isCorrectKeyWord) {
-                SwingUtilities.invokeLater(panel::keywordGotGuessed);
+                panel.keywordGotGuessed();
             } else {
-                SwingUtilities.invokeLater(() -> panel.eliminatePlayer(username));
+                panel.eliminatePlayer(username);
             }
         }
     }

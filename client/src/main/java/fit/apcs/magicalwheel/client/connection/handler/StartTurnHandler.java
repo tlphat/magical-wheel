@@ -8,8 +8,6 @@ import java.nio.channels.CompletionHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.SwingUtilities;
-
 import fit.apcs.magicalwheel.client.view.panel.GamePanel;
 import fit.apcs.magicalwheel.lib.constant.EventType;
 import fit.apcs.magicalwheel.lib.util.SocketReadUtil;
@@ -36,7 +34,7 @@ public class StartTurnHandler implements CompletionHandler<Integer, Void> {
             validateEventType(reader);
             final var username = reader.readLine().trim();
             final var turn = Integer.parseInt(reader.readLine());
-            SwingUtilities.invokeLater(() -> panel.startTurn(username, turn));
+            panel.startTurn(username, turn);
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Error in parsing response", ex);
         }

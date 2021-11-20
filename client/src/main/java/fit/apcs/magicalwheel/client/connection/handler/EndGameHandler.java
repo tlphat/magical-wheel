@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.SwingUtilities;
-
 import fit.apcs.magicalwheel.client.view.panel.GamePanel;
 import fit.apcs.magicalwheel.lib.constant.EventType;
 import fit.apcs.magicalwheel.lib.util.SocketReadUtil;
@@ -45,8 +43,7 @@ public class EndGameHandler implements CompletionHandler<Integer, Void> {
             for (var order = 1; order <= numPlayers; ++order) {
                 listScore.add(Integer.parseInt(reader.readLine()));
             }
-            SwingUtilities.invokeLater(
-                    () -> panel.switchToFinishGame(isCompletedKeyword, winner, keyword, numPlayers, listScore));
+            panel.switchToFinishGame(isCompletedKeyword, winner, keyword, numPlayers, listScore);
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Error in parsing response", ex);
         }
