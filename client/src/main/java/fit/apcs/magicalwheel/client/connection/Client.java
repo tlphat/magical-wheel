@@ -101,10 +101,9 @@ public final class Client {
         channel.read(byteBuffer, null, responseHandler);
     }
 
-    public void submitGuess(GamePanel panel, String guessChar, String keyword) {
+    public void submitGuess(String guessChar, String keyword) {
         final var message = SocketWriteUtil.getMessageFromLines(PLAYER_GUESS, guessChar, keyword);
         SocketWriteUtil.writeStringToChannel(channel, message);
-        waitForGuessResponse(panel);
     }
 
     public void waitForGuessResponse(GamePanel panel) {
