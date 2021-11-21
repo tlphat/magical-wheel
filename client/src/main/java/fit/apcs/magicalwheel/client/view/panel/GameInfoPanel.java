@@ -30,6 +30,7 @@ public class GameInfoPanel extends JPanel {
     private void initLayout() {
         setOpaque(false);
         add(keywordPanel());
+
     }
 
     public void setNewKeyword(String keyword) {

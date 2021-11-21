@@ -80,7 +80,7 @@ public class GamePanel extends JPanel {
 
     private JPanel contentPanel() {
         final var contentPanel = new JPanel(new BorderLayout());
-        contentPanel.setPreferredSize(new Dimension(900, 400));
+        contentPanel.setPreferredSize(new Dimension(900, 300));
         contentPanel.setOpaque(false);
         contentPanel.add(scoreboardPanel, BorderLayout.WEST);
         contentPanel.add(mainGamePanel());
@@ -111,8 +111,8 @@ public class GamePanel extends JPanel {
         final var mainGamePanel = new JPanel(new GridBagLayout());
         final var gbc = new GridBagConstraints();
         gbc.gridwidth = GridBagConstraints.REMAINDER;
-        gbc.insets = new Insets(50, 10, 10, 10);
-        mainGamePanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
+        gbc.insets = new Insets(20, 10, 10, 10);
+        //mainGamePanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
         mainGamePanel.setOpaque(false);
         mainGamePanel.add(messagePanel(), gbc);
         mainGamePanel.add(gameInfoPanel, gbc);

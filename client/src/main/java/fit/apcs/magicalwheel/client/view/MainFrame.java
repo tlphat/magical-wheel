@@ -1,6 +1,7 @@
 package fit.apcs.magicalwheel.client.view;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.Serial;
@@ -25,8 +26,8 @@ public class MainFrame extends JFrame {
     public MainFrame() {
         setTitle(ResourceUtil.GAME_NAME);
         setOnExitEvent();
-        setExtendedState(MAXIMIZED_BOTH);
-        setResizable(false);
+        setSize(new Dimension(950, 400));
+        //setResizable(false);
         setIconImage(new ImageIcon(ResourceUtil.getImageURL("wheel.png")).getImage());
         addWelcomePanel();
         setBackground(Color.BLACK);

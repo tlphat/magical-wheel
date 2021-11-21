@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.io.Serial;
 import java.util.List;
@@ -50,7 +51,7 @@ public class WelcomePanel extends JPanel {
         final var gbc = new GridBagConstraints();
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.anchor = GridBagConstraints.NORTH;
-        gbc.insets = new Insets(15,0,0,0);
+        gbc.insets = new Insets(5,0,0,0);
 
         add(centralLabel(), gbc);
         add(usernameField(), gbc);
@@ -136,15 +137,23 @@ public class WelcomePanel extends JPanel {
     private JLabel centralLabel() {
         final var label = new JLabel();
         label.setText(ResourceUtil.GAME_NAME);
-        label.setIcon(new ImageIcon(ResourceUtil.getImageURL("wheel.png")));
+        label.setIcon(imageIconResize());
         label.setHorizontalTextPosition(SwingConstants.CENTER);
         label.setVerticalTextPosition(SwingConstants.TOP);
         label.setForeground(Color.YELLOW);
-        label.setFont(new Font("Goudy Old Style", Font.BOLD, 50));
-        label.setIconTextGap(20);
+        label.setFont(new Font("Goudy Old Style", Font.BOLD, 40));
+        label.setIconTextGap(5);
         label.setHorizontalAlignment(SwingConstants.CENTER);
         label.setVerticalAlignment(SwingConstants.CENTER);
         return label;
+    }
+
+    private ImageIcon imageIconResize() {
+        ImageIcon imageIcon = new ImageIcon(ResourceUtil.getImageURL("wheel.png")); // load the image to a imageIcon
+        Image image = imageIcon.getImage(); // transform it 
+        Image newimg = image.getScaledInstance(200, 200,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way  
+        imageIcon = new ImageIcon(newimg);  // transform it back
+        return imageIcon;
     }
 
     public void joinWaitingRoom(int maxNumPlayers, List<Player> listPlayers) {

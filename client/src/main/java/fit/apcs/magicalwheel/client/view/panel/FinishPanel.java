@@ -49,7 +49,7 @@ public class FinishPanel extends JPanel {
     private void initLayout() {
         final var gbc = new GridBagConstraints();
         gbc.gridwidth = GridBagConstraints.REMAINDER;
-        gbc.insets = new Insets(10, 0, 0 ,0);
+        gbc.insets = new Insets(5, 0, 0 ,0);
         setLayout(new GridBagLayout());
         setOpaque(false);
         add(resultPanel(), gbc);
@@ -87,7 +87,7 @@ public class FinishPanel extends JPanel {
         final var gbc = new GridBagConstraints();
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.anchor = GridBagConstraints.NORTH;
-        gbc.insets = new Insets(20, 0, 0, 0);
+        gbc.insets = new Insets(10, 0, 0, 0);
         panel.setOpaque(false);
         panel.add(title(), gbc);
         panel.add(gameResult(), gbc);
