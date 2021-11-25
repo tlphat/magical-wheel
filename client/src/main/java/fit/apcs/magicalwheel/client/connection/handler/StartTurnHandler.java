@@ -33,7 +33,11 @@ public class StartTurnHandler implements CompletionHandler<Integer, Void> {
         LOGGER.log(Level.INFO, "Response:\n{0}", SocketReadUtil.byteBufferToString(byteBuffer, numBytes));
         try {
             final var reader = SocketReadUtil.byteBufferToReader(byteBuffer, numBytes);
-            validateEventType(reader);
+            final var eventType = validateEventType(reader);
+            if (eventType == EventType.LEAVE_GAME) {
+                handleLeaveGameSignal(reader);
+                return;
+            }
             final var username = reader.readLine().trim();
             final var turn = Integer.parseInt(reader.readLine());
             SwingUtilities.invokeLater(() -> panel.startTurn(username, turn));
@@ -42,14 +46,21 @@ public class StartTurnHandler implements CompletionHandler<Integer, Void> {
         }
     }
 
-    private void validateEventType(BufferedReader reader) throws IOException {
+    private EventType validateEventType(BufferedReader reader) throws IOException {
         final var type = EventType.fromString(reader.readLine());
-        if (type != EventType.START_TURN) {
-            LOGGER.log(Level.WARNING, "Expect response of type {0}, got {1}",
-                       new Object[]{EventType.START_TURN, type});
+        if (type != EventType.START_TURN && type != EventType.LEAVE_GAME) {
+            LOGGER.log(Level.WARNING, "Expect response of type {0} or {1}, got {2}",
+                       new Object[]{EventType.START_TURN, EventType.LEAVE_GAME, type});
             clearAndReadBuffer();
             throw new IOException("Event type is not correct");
         }
+        return type;
+    }
+
+    private void handleLeaveGameSignal(BufferedReader reader) throws IOException {
+        final var usernameWhoLeave = reader.readLine().trim();
+        SwingUtilities.invokeLater(() -> panel.eliminatePlayer(usernameWhoLeave));
+        clearAndReadBuffer();
     }
 
     private void clearAndReadBuffer() {
