@@ -20,7 +20,8 @@ public enum EventType {
     START_GAME("2"),
     START_TURN("3"),
     PLAYER_GUESS("4"),
-    END_GAME("5");
+    END_GAME("5"),
+    LEAVE_GAME("6");
 
     private static final Logger LOGGER = Logger.getLogger(EventType.class.getName());
     private final String value;
