@@ -41,6 +41,7 @@ public class StartGameHandler implements CompletionHandler<Integer, Void> {
             switch (type) {
                 case START_GAME -> handleStartGameSignal(reader, panel);
                 case JOIN_ROOM -> handleJoinGameSignal(reader, panel);
+                case LEAVE_GAME -> handleLeaveGameSignal(reader, panel);
                 default -> clearAndReadBuffer();
             }
         } catch (IOException ex) {
@@ -95,6 +96,12 @@ public class StartGameHandler implements CompletionHandler<Integer, Void> {
             players.add(new Player(order, username));
         }
         return players;
+    }
+
+    private void handleLeaveGameSignal(BufferedReader reader, WaitingPanel panel) throws IOException {
+        final var usernameWhoLeaveRoom = reader.readLine().trim();
+        SwingUtilities.invokeLater(() -> panel.removePlayer(usernameWhoLeaveRoom));
+        clearAndReadBuffer();
     }
 
     private void clearAndReadBuffer() {

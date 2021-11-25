@@ -159,4 +159,13 @@ public class WaitingPanel extends JPanel {
         addNewPlayerToRoom(listPlayers.get(listPlayers.size() - 1).getUsername());
     }
 
+    public synchronized void removePlayer(String usernameWhoLeaveRoom) {
+        final var gotRemoved = waitingPlayers.removeIf(
+                player -> player.getUsername().equals(usernameWhoLeaveRoom));
+        if (gotRemoved) {
+            // TODO: update layout, remove player with username equals usernameWhoLeaveRoom
+            mainFrame.refresh();
+        }
+    }
+
 }
