@@ -80,7 +80,7 @@ public class GamePanel extends JPanel {
 
     private JPanel contentPanel() {
         final var contentPanel = new JPanel(new BorderLayout());
-        contentPanel.setPreferredSize(new Dimension(900, 300));
+        contentPanel.setPreferredSize(new Dimension(900, 350));
         contentPanel.setOpaque(false);
         contentPanel.add(scoreboardPanel, BorderLayout.WEST);
         contentPanel.add(mainGamePanel());

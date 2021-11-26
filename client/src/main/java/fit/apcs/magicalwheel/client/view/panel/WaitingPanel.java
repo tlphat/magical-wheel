@@ -134,7 +134,12 @@ public class WaitingPanel extends JPanel {
     }
 
     private void setWaitingMessage() {
-        message.setText("Please wait for more " + (maxNumPlayers - currentNumber) + " players to join ...");
+        if (maxNumPlayers - currentNumber > 1) {
+            message.setText("Please wait for more " + (maxNumPlayers - currentNumber) + " players to join ...");
+        }
+        else {
+            message.setText("Please wait for another player to join ...");
+        }
     }
 
     @SuppressWarnings("MethodMayBeStatic")

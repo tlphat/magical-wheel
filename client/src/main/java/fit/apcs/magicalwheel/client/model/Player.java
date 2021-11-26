@@ -52,5 +52,5 @@ public class Player {
     public void eliminate() {
         active = false;
     }
-
+    
 }
