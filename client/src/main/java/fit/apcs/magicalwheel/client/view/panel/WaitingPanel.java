@@ -8,6 +8,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.io.Serial;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -79,10 +80,14 @@ public class WaitingPanel extends JPanel {
         waitingList.setPreferredSize(new Dimension(300, PLAY_ELEMENT_HEIGHT * maxNumPlayers));
         waitingList.setBorder(BorderFactory.createLineBorder(Color.WHITE));
         waitingList.setOpaque(false);
+        updatePlayerPanelsOfWaitingList();
+        return waitingList;
+    }
+
+    private void updatePlayerPanelsOfWaitingList() {
         for (Player player: waitingPlayers) {
             addNewPlayerToWaitingList(player);
         }
-        return waitingList;
     }
 
     private void addNewPlayerToWaitingList(Player player) {
@@ -162,8 +167,13 @@ public class WaitingPanel extends JPanel {
     public synchronized void removePlayer(String usernameWhoLeaveRoom) {
         final var gotRemoved = waitingPlayers.removeIf(
                 player -> player.getUsername().equals(usernameWhoLeaveRoom));
+        for (Player player: waitingPlayers) {
+            player.setOrder(waitingPlayers.indexOf(player) + 1);
+        }
         if (gotRemoved) {
             // TODO: update layout, remove player with username equals usernameWhoLeaveRoom
+            waitingList.removeAll();
+            updatePlayerPanelsOfWaitingList();
             mainFrame.refresh();
         }
     }

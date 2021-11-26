@@ -3,7 +3,7 @@ package fit.apcs.magicalwheel.client.model;
 public class Player {
 
     private final String username;
-    private final int order;
+    private int order;
     private int point;
     private boolean active = true;
 
@@ -51,6 +51,10 @@ public class Player {
 
     public void eliminate() {
         active = false;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
     }
 
 }
