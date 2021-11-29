@@ -41,14 +41,26 @@ class NetworkManager:
         return True
 
     def close_socket(self, sock):
+        def create_response():
+            return 
+
         if sock in self.outputs:
-            self.ouputs.remove(sock)
+            self.outputs.remove(sock)
         if sock in self.alive_sockets:
             self.alive_sockets.remove(sock)
 
         self.inputs.remove(sock)
         self.message_queues.pop(sock, None)
+        if sock in self.accepted_sockets:
+            dis_player = self.get_player_by_sock(sock)
+            dis_player.eliminate()
+            response_content = [EventType["PLAYER_LEAVE_GAME"], dis_player.username]
+            self.game.event_manager.push_response(Response(PUBLIC_RESPONSE, ResponseData(response_content, None)))
+            
         sock.close()
+
+    def get_player_by_sock(self, sock):
+        return self.game.player_manager.get_player_by_socket_id(self.get_socket_id(sock))
 
     def get_socket_id(self, sock):
         return self.socket_to_id[sock]
@@ -65,6 +77,7 @@ class NetworkManager:
             next_msg = self.message_queues[s].get_nowait()
         except Exception as e:
             self.outputs.remove(s)
+            print(e)
             return None
         else:
             return next_msg

@@ -17,6 +17,7 @@ EventType = {
         'START_TURN': 3,
         'PLAYER_GUEST': 4,
         'END_GAME': 5,
+        'PLAYER_LEAVE_GAME': 6,
         }
 StatusCode = {
         'SUCCESS': 0,

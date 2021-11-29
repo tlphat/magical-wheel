@@ -21,7 +21,7 @@ class EventManager:
             self.request_queue.append(request)
             self.lock.release()
         else:
-            print("Invalid event data: ", data)
+            print("Invalid event data: ", raw_request_data)
 
     def push_response(self, response):
         self.response_queue.append(response)
