@@ -63,16 +63,19 @@ class PlayerManager:
         return None
 
     def accept_player(self, username, socket_id):
+        self.prepare()
         player = Player(self, username, socket_id)
         self.players.append(player)
         self.num_player += 1
 
     def prepare(self):
-        self.num_player = NUM_PLAYER
         alive_player = []
         for player in self.players:
             if not player.eliminated():
                 alive_player.append(player)
+
+        self.players = alive_player
+        self.num_player = len(self.players)
 
     def wrap_to_response(self, response_content):
         response_content.append(self.num_player)
