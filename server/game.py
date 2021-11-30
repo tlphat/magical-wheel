@@ -30,7 +30,7 @@ class Game:
             self.event_manager.process_response_queue()
 
             if self.state == GameState.WAITING:
-                if self.player_manager.full_player():
+                if self.network_manager.full_connection():
                     self.start_game()
             else:
                 self.update_logic()
@@ -107,6 +107,7 @@ class Game:
         print("Keyword: ", self.keyword)
         print("Guested: ", self.guested_keyword)
         self.state = GameState.PRE_START
+        self.player_manager.prepare()
 
         self.publish_response(PUBLIC_RESPONSE, create_response())
 
@@ -141,7 +142,7 @@ class Game:
         username = content[0]
 
         err_code = None
-        if self.player_manager.full_player():
+        if self.network_manager.full_connection():
             err_code = "FULL_CONNECTION"
         elif not is_valid_username(username):
             err_code = "USERNAME_INVALID"
@@ -197,7 +198,7 @@ class Game:
                     if self.origin_keyword[i] == guest_char:
                         self.guested_keyword = self.guested_keyword[:i] + guest_char + self.guested_keyword[i + 1:]
 
-        if guest_keyword and (self.round > 1 or self.turn > 1):
+        if guest_keyword and (self.round > 1 or self.turn > 2):
             guest_keyword = guest_keyword.upper()
             if guest_keyword == self.origin_keyword:
                 current_player.update_score(5)

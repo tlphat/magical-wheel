@@ -67,6 +67,13 @@ class PlayerManager:
         self.players.append(player)
         self.num_player += 1
 
+    def prepare(self):
+        self.num_player = NUM_PLAYER
+        alive_player = []
+        for player in self.players:
+            if not player.eliminated():
+                alive_player.append(player)
+
     def wrap_to_response(self, response_content):
         response_content.append(self.num_player)
         for player in self.players:
@@ -82,7 +89,7 @@ class PlayerManager:
 
     def username_existed(self, username):
         for player in self.players:
-            if player.username == username:
+            if not player.eliminated() and player.username == username:
                 return True
 
         return False

@@ -40,14 +40,15 @@ class NetworkManager:
 
         return True
 
-    def close_socket(self, sock):
-        def create_response():
-            return 
+    def full_connection(self):
+        return len(self.accepted_sockets) == NUM_PLAYER
 
+    def close_socket(self, sock):
         if sock in self.outputs:
             self.outputs.remove(sock)
         if sock in self.alive_sockets:
             self.alive_sockets.remove(sock)
+
 
         self.inputs.remove(sock)
         self.message_queues.pop(sock, None)
@@ -56,6 +57,7 @@ class NetworkManager:
             dis_player.eliminate()
             response_content = [EventType["PLAYER_LEAVE_GAME"], dis_player.username]
             self.game.event_manager.push_response(Response(PUBLIC_RESPONSE, ResponseData(response_content, None)))
+            self.accepted_sockets.remove(sock)
             
         sock.close()
 
