@@ -12,7 +12,7 @@ def load_keyword_and_hint():
     with open(file_path) as f:
         n = int(f.readline())
         db = []
-        for i in range(n):
+        for _ in range(n):
             keyword = f.readline().strip()
             hint = f.readline().strip()
             db.append((keyword, hint))

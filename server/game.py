@@ -2,7 +2,6 @@ import time
 from event_manager import EventManager
 from network_manager import NetworkManager
 from player_manager import PlayerManager
-from player import Player
 from constants import *
 from config import *
 from utilities import *
@@ -14,13 +13,13 @@ class Game:
         self.event_manager = EventManager(self, self.network_manager)
         self.player_manager = PlayerManager(self)
         self.state = GameState.WAITING
-        self.start_turn_time = None
+        self.start_turn_time = 0
         self.turn = 0
         self.round = 1
-        self.keyword = None
-        self.origin_keyword = None
-        self.hint = None
-        self.guested_keyword = None
+        self.keyword = ""
+        self.origin_keyword = ""
+        self.hint = ""
+        self.guested_keyword = ""
         self.is_pending_next_turn = False
         self.is_guested_keyword = False
         self.is_pending_response = False
@@ -31,7 +30,7 @@ class Game:
             self.event_manager.process_response_queue()
 
             if self.state == GameState.WAITING:
-                if self.player_manager.full_player():
+                if self.network_manager.full_connection():
                     self.start_game()
             else:
                 self.update_logic()
@@ -67,10 +66,14 @@ class Game:
 
     def next_turn(self):
         def create_response():
-            response_content = [EventType["START_TURN"], next_player.username, self.round]
-            return ResponseData(response_content, next_player.socket_id)
+            response_content = [EventType["START_TURN"], next_player.username if next_player else "",  self.round]
+            return ResponseData(response_content, next_player.socket_id if next_player else None)
         
         next_player = self.player_manager.get_next_player()
+
+        if next_player is None:
+            self.end_game()
+            return
 
         if (self.turn == NUM_PLAYER):
             self.round += 1
@@ -91,7 +94,7 @@ class Game:
 
     def start_game(self):
         def create_response():
-            response_content = [EventType["START_GAME"], len(self.keyword), self.hint, TIME_PER_TURN - 0.75, NUM_ROUND]
+            response_content = [EventType["START_GAME"], len(self.keyword) if self.keyword else "", self.hint, TIME_PER_TURN - 0.75, NUM_ROUND]
             self.player_manager.wrap_to_response(response_content)
             
             return ResponseData(response_content, None)
@@ -104,6 +107,7 @@ class Game:
         print("Keyword: ", self.keyword)
         print("Guested: ", self.guested_keyword)
         self.state = GameState.PRE_START
+        self.player_manager.prepare()
 
         self.publish_response(PUBLIC_RESPONSE, create_response())
 
@@ -112,7 +116,7 @@ class Game:
     def end_game(self):
         def create_response():
             is_complete_keyword = 1 if self.is_guested_keyword else 0
-            correct_guest_username = self.player_manager.cur_player.username if is_complete_keyword else ""
+            correct_guest_username = self.player_manager.cur_player.username if is_complete_keyword and self.player_manager.cur_player else ""
             response_content = [EventType["END_GAME"], is_complete_keyword, correct_guest_username, self.origin_keyword]
             self.player_manager.wrap_score_to_response(response_content)
             return ResponseData(response_content, None)
@@ -138,7 +142,7 @@ class Game:
         username = content[0]
 
         err_code = None
-        if self.player_manager.full_player():
+        if self.network_manager.full_connection():
             err_code = "FULL_CONNECTION"
         elif not is_valid_username(username):
             err_code = "USERNAME_INVALID"
@@ -157,7 +161,7 @@ class Game:
 
     def receive_guest_handler(self, request_data):
         def create_response():
-            response_content = [EventType["PLAYER_GUEST"], current_player.username, guest_char, guest_keyword, self.guested_keyword, current_player.score, is_correct_keyword, 1 if self.is_end_game() else 0]
+            response_content = [EventType["PLAYER_GUEST"], current_player.username if current_player else "", guest_char, guest_keyword, self.guested_keyword, current_player.score if current_player else 0,  is_correct_keyword, 1 if self.is_end_game() else 0]
             return ResponseData(response_content, socket_id)
 
         content = request_data.content
@@ -173,6 +177,10 @@ class Game:
             return
 
         current_player = self.player_manager.cur_player
+        if current_player is None:
+            print("Invalid game state")
+            return
+
         num_correct_char = 0
         is_correct_keyword = 0
 
@@ -190,7 +198,7 @@ class Game:
                     if self.origin_keyword[i] == guest_char:
                         self.guested_keyword = self.guested_keyword[:i] + guest_char + self.guested_keyword[i + 1:]
 
-        if guest_keyword and (self.round > 1 or self.turn > 1):
+        if guest_keyword and (self.round > 1 or self.turn > 2):
             guest_keyword = guest_keyword.upper()
             if guest_keyword == self.origin_keyword:
                 current_player.update_score(5)
@@ -208,7 +216,7 @@ class Game:
     def send_dummy_response(self):
         def create_response():
             current_player = self.player_manager.cur_player
-            response_content = [EventType["PLAYER_GUEST"], current_player.username, '', '', self.guested_keyword, current_player.score, 0, 1 if self.is_end_game() else 0]
+            response_content = [EventType["PLAYER_GUEST"], current_player.username if current_player else "", '', '', self.guested_keyword, current_player.score if current_player else 0, 0, 1 if self.is_end_game() else 0]
             return ResponseData(response_content, None)
             
         return self.publish_response(PUBLIC_RESPONSE, create_response())

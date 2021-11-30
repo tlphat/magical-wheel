@@ -1,12 +1,12 @@
 import socket, select
-from _thread import *
+from _thread import start_new_thread
 import time
 from game import Game
 from config import *
 from constants import *
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.setblocking(0)
+server.setblocking(False)
 
 
 while True:
@@ -25,7 +25,6 @@ def run():
 
     network = game.network_manager
     network.inputs.append(server)
-    network.sock_to_id = {}
 
     while not game.ended() or len(network.outputs) > 0:
         readable, writable, exceptional = select.select(network.inputs, network.outputs, network.inputs, TIME_OUT)
@@ -47,7 +46,11 @@ def run():
                     network.close_socket(s)
                     continue
                 
-                data = s.recv(4096).decode()
+                try:
+                    data = s.recv(4096).decode()
+                except ConnectionResetError:
+                    network.close_socket(s)
+                    continue
 
                 if not data:
                     network.close_socket(s)
@@ -61,11 +64,6 @@ def run():
                 s.send(next_msg)
 
         for s in exceptional:
-            network.close_socket(s)
-
-    # Clean connections
-    for s in reversed(network.inputs):
-        if not s is server:
             network.close_socket(s)
 
 num_game = 1

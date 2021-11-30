@@ -42,7 +42,13 @@ class PlayerManager:
         else:
             self.next_player = None
 
-        posible_next_player_idx = (self.get_player_idx(self.cur_player) + 1) % self.num_player if self.cur_player else 0
+        cur_player_idx = None
+        if self.cur_player:
+            cur_player_idx = self.get_player_idx(self.cur_player)
+
+        posible_next_player_idx = 0
+        if not cur_player_idx is None:
+            posible_next_player_idx = (cur_player_idx + 1) % self.num_player
 
         count = 0
         while count < self.num_player:
@@ -57,9 +63,19 @@ class PlayerManager:
         return None
 
     def accept_player(self, username, socket_id):
+        self.prepare()
         player = Player(self, username, socket_id)
         self.players.append(player)
         self.num_player += 1
+
+    def prepare(self):
+        alive_player = []
+        for player in self.players:
+            if not player.eliminated():
+                alive_player.append(player)
+
+        self.players = alive_player
+        self.num_player = len(self.players)
 
     def wrap_to_response(self, response_content):
         response_content.append(self.num_player)
@@ -76,7 +92,7 @@ class PlayerManager:
 
     def username_existed(self, username):
         for player in self.players:
-            if player.username == username:
+            if not player.eliminated() and player.username == username:
                 return True
 
         return False
@@ -86,3 +102,9 @@ class PlayerManager:
     
     def is_current_turn_for_socket_id(self, socket_id):
         return self.cur_player and self.cur_player.socket_id == socket_id
+    
+    def get_player_by_socket_id(self, socket_id):
+        for player in self.players:
+            if player.socket_id == socket_id:
+                return player
+        return None
