@@ -116,6 +116,7 @@ public class WaitingPanel extends JPanel {
     private void addNewPlayerToRoom(String username) {
         currentNumber++;
         final var player = new Player(currentNumber, username);
+        waitingPlayers.add(player);
         setWaitingMessage();
         addNewPlayerToWaitingList(player);
     }
